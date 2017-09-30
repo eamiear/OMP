@@ -1,0 +1,9 @@
+**/.DS_Store
+build/
+node_modules
+npm-debug.log
+.idea
+.git
+.vscode/
+.typingsrc
+/.vs/config/applicationhost.config

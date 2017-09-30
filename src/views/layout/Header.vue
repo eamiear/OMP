@@ -1,0 +1,103 @@
+<template>
+  <header class="main-header">
+    <!-- Logo -->
+    <a href="#" class="logo">
+      <span class="logo-lg">优托邦运营管理平台</span>
+    </a>
+    <!-- Header Navbar -->
+    <nav class="navbar navbar-static-top">
+      <!-- Sidebar toggle button-->
+      <toggle class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></toggle>
+
+      <div class="navbar-custom-menu">
+        <ul class="nav navbar-nav">
+          <!-- User Account: style can be found in dropdown.less -->
+          <li class="user user-menu">
+            <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
+              <img :src="avatar" class="user-image" alt="User Image">
+              <span class="hidden-xs">{{name}}</span>
+            </a>
+            <ul class="dropdown-menu">
+              <!-- User image -->
+              <li class="user-header">
+                <img :src="avatar" class="img-circle" alt="User Image">
+
+                <p>
+                  {{name}}
+                  <small>2017.09.22 - 2022.09.22</small>
+                </p>
+              </li>
+              <!-- Menu Body -->
+              <!--<li class="user-body">-->
+              <!--</li>-->
+              <!-- Menu Footer-->
+              <li class="user-footer">
+                <div class="pull-left">
+                  <router-link class='inlineBlock' to="/">
+                    <span class="btn btn-default btn-flat">首页</span>
+                  </router-link>
+
+                </div>
+                <div class="pull-right">
+                  <span @click="logout" class="btn btn-default btn-flat">退出登录</span>
+                </div>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+</template>
+
+<script>
+  import { mapGetters } from 'vuex'
+  import Toggle from '@/components/Toggle'
+  import { slimScroll } from '@/utils/plug'
+
+  export default {
+    components: {
+      Toggle
+    },
+    data () {
+      return {
+        openUserMenu: false
+      }
+    },
+    props: {
+      slimscroll: {
+        type: Boolean,
+        default: false
+      }
+    },
+    computed: {
+      ...mapGetters([
+        'sidebar',
+        'name',
+        'avatar'
+      ])
+    },
+    mounted () {
+      if (this.slimscroll) {
+        slimScroll('.navbar .menu', {
+          height: '200px'
+        })
+      } else {
+        let menu = document.querySelector('.navbar .menu')
+        if (menu) {
+          menu.style.overflowY = 'auto'
+        }
+      }
+    },
+    methods: {
+      toggleSideBar () {
+        this.$store.dispatch('ToggleSideBar')
+      },
+      logout () {
+        this.$store.dispatch('LogOut').then(() => {
+          location.reload()// 为了重新实例化vue-router对象 避免bug
+        })
+      }
+    }
+  }
+</script>
