@@ -1,134 +1,13 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" placeholder="编码" v-model="listQuery.title"></el-input>
-      <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" placeholder="名称" v-model="listQuery.name"></el-input>
+      <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" placeholder="地域名称" v-model="listQuery.name"></el-input>
+      <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" placeholder="地域编码" v-model="listQuery.code"></el-input>
 
       <el-button class="filter-item" type="primary" icon="search" @click="handleFilter">搜索</el-button>
-      <el-button class="filter-item" type="primary" icon="edit" @click="handleCreate">添加</el-button>
-      <el-button class="filter-item" type="primary" icon="fa-refresh" @click="handleDownload">刷新</el-button>
+      <el-button class="filter-item" type="primary" icon="fa-refresh" @click="handleRefresh">刷新</el-button>
     </div>
-
-    <el-table class="area-code-container" :key='tableKey' :data="list" v-loading="listLoading" element-loading-text="加载中..." border fit highlight-current-row>
-
-      <el-table-column align="center" label="序号" width="65">
-        <template scope="scope">
-          <span>{{scope.row.id}}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column width="180px" align="center" label="地域名称">
-        <template scope="scope">
-          <span>{{scope.row.timestamp}}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column min-width="300px" label="地域编码">
-        <template scope="scope">
-          <span class="link-type" @click="handleUpdate(scope.row)">{{scope.row.title}}</span>
-          <el-tag>{{scope.row.type | typeFilter}}</el-tag>
-        </template>
-      </el-table-column>
-
-      <el-table-column width="110px" align="center" label="父编码">
-        <template scope="scope">
-          <span>{{scope.row.author}}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column width="110px" v-if='showAuditor' align="center" label="排序">
-        <template scope="scope">
-          <span style='color:red;'>{{scope.row.auditor}}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column label="创建时间">
-        <template scope="scope">
-          <icon v-for="n in +scope.row.importance" name="user" class="meta-item__icon" :key="n"></icon>
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="更新时间" >
-        <template scope="scope">
-          <span class="link-type" @click='handleFetchPv(scope.row.pageviews)'>{{scope.row.pageviews}}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column class-name="status-col" label="操作者" width="90">
-        <template scope="scope">
-          <el-tag :type="scope.row.status | statusFilter">{{scope.row.status}}</el-tag>
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="操作" width="150">
-        <template scope="scope">
-          <el-button v-if="scope.row.status!='published'" size="small" type="success" @click="handleModifyStatus(scope.row,'published')">发布
-          </el-button>
-          <el-button v-if="scope.row.status!='draft'" size="small" @click="handleModifyStatus(scope.row,'draft')">草稿
-          </el-button>
-          <el-button v-if="scope.row.status!='deleted'" size="small" type="danger" @click="handleModifyStatus(scope.row,'deleted')">删除
-          </el-button>
-        </template>
-      </el-table-column>
-
-    </el-table>
-
-    <div v-show="!listLoading" class="pagination-container">
-      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="listQuery.page"
-                     :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next, jumper" :total="total">
-      </el-pagination>
-    </div>
-
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form class="small-space" :model="temp" label-position="left" label-width="70px" style='width: 400px; margin-left:50px;'>
-        <el-form-item label="类型">
-          <el-select class="filter-item" v-model="temp.type" placeholder="请选择">
-            <el-option v-for="item in  calendarTypeOptions" :key="item.key" :label="item.display_name" :value="item.key">
-            </el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="状态">
-          <el-select class="filter-item" v-model="temp.status" placeholder="请选择">
-            <el-option v-for="item in  statusOptions" :key="item" :label="item" :value="item">
-            </el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="时间">
-          <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="选择日期时间">
-          </el-date-picker>
-        </el-form-item>
-
-        <el-form-item label="标题">
-          <el-input v-model="temp.title"></el-input>
-        </el-form-item>
-
-        <el-form-item label="重要性">
-          <el-rate style="margin-top:8px;" v-model="temp.importance" :colors="['#99A9BF', '#F7BA2A', '#FF9900']"></el-rate>
-        </el-form-item>
-
-        <el-form-item label="点评">
-          <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 4}" placeholder="请输入内容" v-model="temp.remark">
-          </el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button v-if="dialogStatus=='create'" type="primary" @click="create">确 定</el-button>
-        <el-button v-else type="primary" @click="update">确 定</el-button>
-      </div>
-    </el-dialog>
-
-    <el-dialog title="阅读数统计" :visible.sync="dialogPvVisible" size="small">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="key" label="渠道"> </el-table-column>
-        <el-table-column prop="pv" label="pv"> </el-table-column>
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">确 定</el-button>
-      </span>
-    </el-dialog>
+    <table-tree class="area-code-container" :listLoading="listLoading" :columns="columns" :tree-structure="true" :data-source="dataSource"></table-tree>
 
   </div>
 </template>
@@ -150,62 +29,59 @@
 </style>
 
 <script>
-  import { fetchList, fetchPv } from '@/api/article'
-  import { parseTime } from '@/utils'
-
-  const calendarTypeOptions = [
-    { key: 'CN', display_name: '中国' },
-    { key: 'US', display_name: '美国' },
-    { key: 'JP', display_name: '日本' },
-    { key: 'EU', display_name: '欧元区' }
-  ]
-
-  // arr to obj
-  const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
-    acc[cur.key] = cur.display_name
-    return acc
-  }, {})
+  import { fetchAreaCodeList } from '@/api/basic_areacode'
+  import TableTree from '@/components/table/TableTree.vue'
 
   export default {
-    name: 'table_demo',
+    name: 'areaCode',
     data () {
       return {
-        list: null,
-        total: null,
         listLoading: true,
         listQuery: {
-          page: 1,
-          limit: 20,
-          importance: undefined,
-          title: undefined,
           name: undefined,
-          type: undefined,
-          sort: '+id'
+          code: undefined
         },
-        temp: {
-          id: undefined,
-          importance: 0,
-          remark: '',
-          timestamp: 0,
-          title: '',
-          type: '',
-          status: 'published'
-        },
-        importanceOptions: [1, 2, 3],
-        calendarTypeOptions,
-        sortOptions: [{ label: '按ID升序列', key: '+id' }, { label: '按ID降序', key: '-id' }],
-        statusOptions: ['published', 'draft', 'deleted'],
         dialogFormVisible: false,
         dialogStatus: '',
         textMap: {
           update: '编辑',
           create: '创建'
         },
-        dialogPvVisible: false,
-        pvData: [],
-        showAuditor: false,
-        tableKey: 0
+        columns: [
+          {
+            text: '地域名称',
+            dataIndex: 'name'
+          },
+          {
+            text: '地域编码',
+            dataIndex: 'code'
+          },
+          {
+            text: '父编码',
+            dataIndex: 'pcode'
+          },
+          {
+            text: '排序',
+            dataIndex: 'order'
+          },
+          {
+            text: '创建时间',
+            dataIndex: 'createTime'
+          },
+          {
+            text: '更新时间',
+            dataIndex: 'updateTime'
+          },
+          {
+            text: '更新者',
+            dataIndex: 'operator'
+          }
+        ],
+        dataSource: []
       }
+    },
+    components: {
+      TableTree
     },
     filters: {
       statusFilter (status) {
@@ -215,9 +91,6 @@
           deleted: 'danger'
         }
         return statusMap[status]
-      },
-      typeFilter (type) {
-        return calendarTypeKeyValue[type]
       }
     },
     created () {
@@ -226,32 +99,24 @@
     methods: {
       getList () {
         this.listLoading = true
-        fetchList(this.listQuery).then(response => {
-          this.list = response.data.items
-          this.total = response.data.total
+        fetchAreaCodeList().then(response => {
+          const result = response.data
+          if (response.status === 200 && result.code === 0) {
+            this.dataSource = result.data
+          }
           this.listLoading = false
+        }).catch(err => {
+          console.log(err)
+          this.$notify({
+            title: '失败',
+            message: '获取数据失败',
+            type: 'error',
+            duration: 2000
+          })
         })
       },
       handleFilter () {
-        this.listQuery.page = 1
         this.getList()
-      },
-      handleSizeChange (val) {
-        this.listQuery.limit = val
-        this.getList()
-      },
-      handleCurrentChange (val) {
-        this.listQuery.page = val
-        this.getList()
-      },
-      timeFilter (time) {
-        if (!time[0]) {
-          this.listQuery.start = undefined
-          this.listQuery.end = undefined
-          return
-        }
-        this.listQuery.start = parseInt(+time[0] / 1000)
-        this.listQuery.end = parseInt((+time[1] + 3600 * 1000 * 24) / 1000)
       },
       handleModifyStatus (row, status) {
         this.$message({
@@ -259,11 +124,6 @@
           type: 'success'
         })
         row.status = status
-      },
-      handleCreate () {
-        this.resetTemp()
-        this.dialogStatus = 'create'
-        this.dialogFormVisible = true
       },
       handleUpdate (row) {
         this.temp = Object.assign({}, row)
@@ -278,24 +138,11 @@
           duration: 2000
         })
         const index = this.list.indexOf(row)
-        this.list.splice(index, 1)
-      },
-      create () {
-        this.temp.id = parseInt(Math.random() * 100) + 1024
-        this.temp.timestamp = +new Date()
-        this.temp.author = '原创作者'
-        this.list.unshift(this.temp)
-        this.dialogFormVisible = false
-        this.$notify({
-          title: '成功',
-          message: '创建成功',
-          type: 'success',
-          duration: 2000
-        })
+        this.dataSource.splice(index, 1)
       },
       update () {
         this.temp.timestamp = +this.temp.timestamp
-        for (const v of this.list) {
+        for (const v of this.dataSource) {
           if (v.id === this.temp.id) {
             const index = this.list.indexOf(v)
             this.list.splice(index, 1, this.temp)
@@ -310,34 +157,15 @@
           duration: 2000
         })
       },
-      resetTemp () {
-        this.temp = {
-          id: undefined,
-          importance: 0,
-          remark: '',
-          timestamp: 0,
-          title: '',
-          status: 'published',
-          type: ''
+      resetListQuery () {
+        this.listQuery = {
+          name: undefined,
+          code: undefined
         }
       },
-      handleFetchPv (pv) {
-        fetchPv(pv).then(response => {
-          this.pvData = response.data.pvData
-          this.dialogPvVisible = true
-        })
-      },
-      handleDownload () {
-
-      },
-      formatJson (filterVal, jsonData) {
-        return jsonData.map(v => filterVal.map(j => {
-          if (j === 'timestamp') {
-            return parseTime(v[j])
-          } else {
-            return v[j]
-          }
-        }))
+      handleRefresh () {
+        this.resetListQuery()
+        this.getList()
       }
     }
   }

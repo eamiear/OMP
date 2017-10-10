@@ -8,9 +8,9 @@ var express = require('express'),
   proxy = require('http-proxy-middleware'),
   app = express()
 
-if (!process.env.NODE_ENV) {
-  process.env.NODE_ENV = JSON.parse(configure.__env__)
-}
+// if (!process.env.NODE_ENV) {
+//   process.env.NODE_ENV = JSON.parse(configure.__env__)
+// }
 var compiler = webpack(config)
 
 // 提供静态资源服务
