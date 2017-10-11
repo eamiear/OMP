@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie'
-import { AUTHORITY_KEY, USER_TOKEN_KEY } from '@/common/constants'
+import { AUTHORITY_KEY, USER_TOKEN_KEY, USER_ID_KEY } from '@/common/constants'
 
 export function getToken () {
   return Cookies.get(USER_TOKEN_KEY)
@@ -11,6 +11,18 @@ export function setToken (token) {
 
 export function removeToken () {
   return Cookies.remove(USER_TOKEN_KEY)
+}
+
+export function getUID () {
+  return Cookies.get(USER_ID_KEY)
+}
+
+export function setUID (uid) {
+  return Cookies.set(USER_ID_KEY, uid)
+}
+
+export function removeUID () {
+  return Cookies.remove(USER_ID_KEY)
 }
 
 export function getAuthorityInfo () {

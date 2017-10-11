@@ -6,6 +6,7 @@ import router from '@/router'
 import store from '@/store'
 import NProgress from 'nprogress' // Progress 进度条
 import 'nprogress/nprogress.css'// Progress 进度条样式
+import { Message } from 'element-ui'
 import { getToken } from '@/common/auth' // 验权
 
 // permission judge
@@ -26,12 +27,16 @@ router.beforeEach((to, from, next) => {
     } else {
       if (store.getters.roles.length === 0) { // 判断当前用户是否已拉取完user_info信息
         store.dispatch('GetUserInfo').then(res => { // 拉取user_info
-          const roles = res.data.role
+          console.log('getUserInfo', res)
+          const result = res.data
+          // const serviceData = result.data
+          const roles = result
           // TODO 获取菜单数据...
           store.dispatch('GenerateRoutes', { roles }).then(() => { // 生成可访问的路由表
             router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
             next({ ...to }) // hack方法 确保addRoutes已完成
           })
+          next({ ...to })
         }).catch(() => {
           store.dispatch('FedLogOut').then(() => {
             next({ path: '/login' })

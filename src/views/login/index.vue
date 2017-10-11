@@ -25,13 +25,13 @@
 </template>
 
 <script>
-import { isvalidUsername } from '@/utils/validate'
+// import { isvalidUsername } from '@/utils/validate'
 
 export default {
   name: 'login',
   data () {
     const validateUsername = (rule, value, callback) => {
-      if (!isvalidUsername(value)) {
+      if (!value) {
         callback(new Error('请输入正确的用户名'))
       } else {
         callback()
@@ -44,6 +44,10 @@ export default {
         callback()
       }
     }
+//    const validateVerification = (rule, value, callback) => {
+//      // TODO
+//      callback()
+//    }
     /* eslint-disable no-unused-vars*/
     // TODO validate verify code
     const validateVerifyCode = (rule, value, callback) => {
@@ -51,13 +55,14 @@ export default {
     }
     return {
       loginForm: {
-        username: '',
-        password: '',
+        username: '13412345678',
+        password: '123456',
         verification: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        password: [{ required: true, trigger: 'blur', validator: validatePassword }] // ,
+//        verification: [{required: true, validator: validateVerification}]
       },
       pwdType: 'password',
       loading: false,
@@ -68,6 +73,9 @@ export default {
     showPwd () {
       this.pwdType = this.pwdType === 'password' ? '' : 'password'
     },
+    fetchVerifyCode () {
+      // TODO
+    },
     handleLogin () {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
@@ -75,8 +83,9 @@ export default {
           this.$store.dispatch('LoginByUsername', this.loginForm).then(() => {
             this.loading = false
             this.$router.push({ path: '/' })
-          }).catch(() => {
+          }).catch((err) => {
             this.loading = false
+            console.log(err)
           })
         } else {
           console.log('error submit!!')
