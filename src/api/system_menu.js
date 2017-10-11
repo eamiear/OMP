@@ -8,17 +8,19 @@
 // ----------- 菜单管理 ---------------
 // ===================================
 
-import fetch from '@/utils/fetch'
+// import fetch from '@/common/fetch'
+import request from '@/common/ajax'
 
 /**
  * 获取区域代码
  * @param query
  */
 export function fetchMenuList (query) {
-  return fetch({
-    url: '',
-    method: 'get',
-    params: {method: 'account.session.gen'}
+  return request.get({
+    reqMethod: 'account.reg.sendRegCheckCode',
+    params: {
+      'mobile': '18825155586'
+    }
   })
 }
 
@@ -27,11 +29,11 @@ export function fetchMenuList (query) {
  * @param query
  */
 export function searchMenuList (query) {
-  return fetch({
-    url: '/',
-    method: 'get',
-    params: query
-  })
+  // return fetch({
+  //   url: '/',
+  //   method: 'get',
+  //   params: query
+  // })
 }
 
 /**
@@ -39,11 +41,11 @@ export function searchMenuList (query) {
  * @param params
  */
 export function createMenuItem (params) {
-  return fetch({
-    url: '/system/menu',
-    method: 'post',
-    params: params || {}
-  })
+  // return fetch({
+  //   url: '/system/menu',
+  //   method: 'post',
+  //   params: params || {}
+  // })
 }
 
 /**
@@ -51,11 +53,11 @@ export function createMenuItem (params) {
  * @param params
  */
 export function editMenuItem (params) {
-  return fetch({
-    url: '/system/menu',
-    method: 'put',
-    params: params
-  })
+  // return fetch({
+  //   url: '/system/menu',
+  //   method: 'put',
+  //   params: params
+  // })
 }
 
 /**
@@ -63,9 +65,9 @@ export function editMenuItem (params) {
  * @param id
  */
 export function deleteMenuItem (id) {
-  return fetch({
-    url: '/system/menu',
-    method: 'delete',
-    params: {id: id}
-  })
+  // return fetch({
+  //   url: '/system/menu',
+  //   method: 'delete',
+  //   params: {id: id}
+  // })
 }

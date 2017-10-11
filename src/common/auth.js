@@ -1,17 +1,16 @@
 import Cookies from 'js-cookie'
-import { AUTHORITY_KEY } from '@/common/constants'
-const TokenKey = 'Admin-Token'
+import { AUTHORITY_KEY, USER_TOKEN_KEY } from '@/common/constants'
 
 export function getToken () {
-  return Cookies.get(TokenKey)
+  return Cookies.get(USER_TOKEN_KEY)
 }
 
 export function setToken (token) {
-  return Cookies.set(TokenKey, token)
+  return Cookies.set(USER_TOKEN_KEY, token)
 }
 
 export function removeToken () {
-  return Cookies.remove(TokenKey)
+  return Cookies.remove(USER_TOKEN_KEY)
 }
 
 export function getAuthorityInfo () {

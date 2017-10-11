@@ -140,6 +140,7 @@
         this.listLoading = true
         fetchMenuList().then(response => {
           const result = response.data
+          console.log('dfd', response)
           if (response.status === 200 && result.code === 0) {
            // this.dataSource = result.data
           }

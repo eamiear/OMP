@@ -1,6 +1,6 @@
 // entry
-import '@/common/css'
-import '@/common/scripts'
+import '@/utils/css'
+import '@/utils/scripts'
 import '@/common/permission' // 权限
 
 import Vue from 'vue'
@@ -12,7 +12,7 @@ import EventBus from '@/common/bus'
 
 import * as filters from './filters' // 全局filter
 import '@/components/Icon' // icon
-import '@/mock'
+// import '@/mock'
 
 // lib
 import ElementUI from 'element-ui'

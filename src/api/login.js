@@ -1,28 +1,25 @@
-import fetch from '@/utils/fetch'
+import request from '@/common/ajax'
 
 export function loginByUsername (username, password) {
   const data = {
     username,
     password
   }
-  return fetch({
+  return request.post({
     url: '/login/login',
-    method: 'post',
     data
   })
 }
 
 export function logout () {
-  return fetch({
-    url: '/login/logout',
-    method: 'post'
+  return request.post({
+    url: '/login/logout'
   })
 }
 
 export function getUserInfo (token) {
-  return fetch({
+  return request.get({
     url: '/user/info',
-    method: 'get',
     params: { token }
   })
 }

@@ -8,16 +8,15 @@
 // ----------- 区域代码 ---------------
 // ===================================
 
-import fetch from '@/utils/fetch'
+import request from '@/common/ajax'
 
 /**
  * 获取区域代码
  * @param query
  */
 export function fetchAreaCodeList (query) {
-  return fetch({
+  return request.get({
     url: '/basicplatform/areacode2',
-    method: 'get',
     params: query
   })
 }
@@ -27,7 +26,7 @@ export function fetchAreaCodeList (query) {
  * @param query
  */
 export function searchAreaCodeList (query) {
-  return fetch({
+  return request.get({
     url: '/',
     method: 'get',
     params: query
@@ -39,7 +38,7 @@ export function searchAreaCodeList (query) {
  * @param params
  */
 export function createAreaCodeItem (params) {
-  return fetch({
+  return request.post({
     url: '/basicplatform/areacode2',
     method: 'post',
     params: params || {}
@@ -51,9 +50,8 @@ export function createAreaCodeItem (params) {
  * @param params
  */
 export function editAreaCodeItem (params) {
-  return fetch({
+  return request.post({
     url: '/basicplatform/areacode2',
-    method: 'put',
     params: params
   })
 }
@@ -63,9 +61,8 @@ export function editAreaCodeItem (params) {
  * @param id
  */
 export function deleteAreaCodeItem (id) {
-  return fetch({
+  return request.post({
     url: '/basicplatform/areacode2',
-    method: 'delete',
     params: {id: id}
   })
 }

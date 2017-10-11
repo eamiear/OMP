@@ -1,11 +1,12 @@
 /**
  * 路由控制、权限控制
  */
+/* eslint-disable no-unused-vars*/
 import router from '@/router'
 import store from '@/store'
 import NProgress from 'nprogress' // Progress 进度条
 import 'nprogress/nprogress.css'// Progress 进度条样式
-import { getToken } from '@/utils/auth' // 验权
+import { getToken } from '@/common/auth' // 验权
 
 // permission judge
 function hasPermission (roles, permissionRoles) {
@@ -15,7 +16,7 @@ function hasPermission (roles, permissionRoles) {
 }
 
 // register global progress.
-const whiteList = ['/login', '/authredirect']// 不重定向白名单
+const whiteList = ['/login', '/authredirect', '/system/menuorg']// 不重定向白名单
 
 router.beforeEach((to, from, next) => {
   NProgress.start() // 开启Progress

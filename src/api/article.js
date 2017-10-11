@@ -1,24 +1,21 @@
-import fetch from '@/utils/fetch'
+import request from '@/common/ajax'
 
 export function fetchList (query) {
-  return fetch({
+  return request.get({
     url: '/article/list',
-    method: 'get',
     params: query
   })
 }
 
 export function fetchArticle () {
-  return fetch({
-    url: '/article/detail',
-    method: 'get'
+  return request.get({
+    url: '/article/detail'
   })
 }
 
 export function fetchPv (pv) {
-  return fetch({
+  return request.get({
     url: '/article/pv',
-    method: 'get',
     params: { pv }
   })
 }

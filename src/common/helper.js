@@ -88,11 +88,11 @@ export const Helper = {
   },
   sort: function (val) {
     const keys = Object.keys(val).sort()
-    let map = {}
+    let sortParam = {}
     keys.forEach((key, index) => {
-      map[key] = val[key]
+      sortParam[key] = val[key]
     })
-    return map
+    return sortParam
   },
   deepSort: function (params) {
     for (let k in params) {

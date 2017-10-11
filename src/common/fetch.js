@@ -2,14 +2,14 @@ import Vue from 'vue'
 import axios from 'axios'
 import { Message } from 'element-ui'
 import store from '@/store'
-import { getToken } from '@/utils/auth'
+import { getToken } from '@/common/auth'
 
 // 创建axios实例
 const service = axios.create({
   baseURL: process.env.BASE_API, // api的base_url
   timeout: 5000                  // 请求超时时间
 })
-Vue.prototype.$http = axios
+Vue.prototype.$http = service
 
 // request请求拦截器
 service.interceptors.request.use(config => {

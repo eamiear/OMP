@@ -1,9 +1,8 @@
-import fetch from '@/utils/fetch'
+import request from '@/common/ajax'
 
 export function userSearch (name) {
-  return fetch({
+  return request.get({
     url: '/search/user',
-    method: 'get',
     params: { name }
   })
 }
