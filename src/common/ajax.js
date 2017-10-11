@@ -64,6 +64,7 @@ class AJax {
       return
     }
     this.$http({
+      url: url,
       method: 'get',
       params: this.getReqParams(method, params)
     }).then((response) => {
