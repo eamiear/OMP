@@ -48,36 +48,12 @@
           <!--添加下级树结构-->
           <!--</router-link>-->
           <!--</button>-->
-          <el-button type="default" size="small" @click="handleCreate(scope.row)">新增</el-button>
-          <el-button type="success" size="samll" @click="handleUpdate(scope.row)">编辑</el-button>
-          <el-button type="danger" size="small"  @click="handleDelete(scope.row)">删除</el-button>
+          <el-button type="default" size="small" @click="emitCreate(scope.row)">新增</el-button>
+          <el-button type="success" size="small" @click="emitUpdate(scope.row)">编辑</el-button>
+          <el-button type="danger" size="small"  @click="emitDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-
-    <el-dialog :title="dialogTitleMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="false" size="tiny">
-      <el-form :model="dialogFormTemp" label-position="left" label-width="70px" style='width: 300px; margin-left:50px;'>
-        <el-form-item label="地域名称">
-          <el-input v-model="dialogFormTemp.name" autofocus></el-input>
-        </el-form-item>
-
-        <el-form-item label="地域编码">
-          <el-input v-model="dialogFormTemp.code"></el-input>
-        </el-form-item>
-
-        <el-form-item label="父编码">
-          <el-input v-model="dialogFormTemp.pcode" :readonly="isReadOnly"></el-input>
-        </el-form-item>
-        <el-form-item label="排序">
-          <el-input v-model="dialogFormTemp.order"></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button v-if="dialogStatus=='create'" type="primary" @click="create">确 定</el-button>
-        <el-button v-else type="primary" @click="update">确 定</el-button>
-      </div>
-    </el-dialog>
   </section>
 </template>
 
@@ -128,29 +104,12 @@
       }
     },
     data () {
-      return {
-        dialogFormTemp: {
-          id: undefined,
-          name: undefined,
-          code: undefined,
-          pcode: undefined,
-          order: 0
-        },
-        isReadOnly: false,
-        dialogFormVisible: false,
-        dialogStatus: '',
-        dialogTitleMap: {
-          update: '编辑',
-          create: '新增'
-        }
-      }
+      return {}
     },
     computed: {
       data: function () { // 格式化数据源
         if (this.treeStructure) {
-          let data = transferToTreeArray(this.dataSource, null, null, this.defaultExpandAll)
-          console.log(data)
-          return data
+          return transferToTreeArray(this.dataSource, null, null, this.defaultExpandAll)
         }
         return this.dataSource
       }
@@ -199,85 +158,14 @@
       toggleIconShow (index, record) {
         return !!(this.treeStructure && index === 0 && record.children && record.children.length > 0)
       },
-      resetDialogFormTemp () {
-        this.dialogFormTemp = {
-          id: undefined,
-          name: undefined,
-          code: undefined,
-          pcode: undefined,
-          order: 0
-        }
+      emitCreate (row) {
+        this.$emit('create', row)
       },
-      handleCreate (row) {
-        this.resetDialogFormTemp()
-        console.log(row)
-        this.dialogFormTemp.pcode = row.code
-        this.dialogStatus = 'create'
-        this.isReadOnly = true
-        this.dialogFormVisible = true
+      emitUpdate (row) {
+        this.$emit('update', row)
       },
-      handleUpdate (row) {
-        this.dialogFormTemp = Object.assign({}, row)
-        this.dialogStatus = 'update'
-        this.isReadOnly = true
-        this.dialogFormVisible = true
-      },
-      handleDelete () {
-        this.$confirm('即将删除该记录, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'error'
-        }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          })
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
-        })
-      },
-//      handleDelete (row) {
-//        this.$notify({
-//          title: '成功',
-//          message: '删除成功',
-//          type: 'success',
-//          duration: 2000
-//        })
-//        const index = this.list.indexOf(row)
-//        this.list.splice(index, 1)
-//      },
-      create () {
-        this.dialogFormTemp.id = parseInt(Math.random() * 100) + 1024
-        this.dialogFormTemp.timestamp = +new Date()
-        this.dialogFormTemp.author = '原创作者'
-        this.list.unshift(this.dialogFormTemp)
-        this.dialogFormVisible = false
-        this.$notify({
-          title: '成功',
-          message: '创建成功',
-          type: 'success',
-          duration: 2000
-        })
-      },
-      update () {
-        this.dialogFormTemp.timestamp = +this.dialogFormTemp.timestamp
-        for (const v of this.list) {
-          if (v.id === this.dialogFormTemp.id) {
-            const index = this.list.indexOf(v)
-            this.list.splice(index, 1, this.dialogFormTemp)
-            break
-          }
-        }
-        this.dialogFormVisible = false
-        this.$notify({
-          title: '成功',
-          message: '更新成功',
-          type: 'success',
-          duration: 2000
-        })
+      emitDelete (row) {
+        this.$emit('delete', row)
       }
     }
   }

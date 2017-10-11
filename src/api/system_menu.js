@@ -1,11 +1,11 @@
 /**
- * Created by skz on 2017/10/911:09
+ * Created by skz on 2017/10/10 14:03
  */
 
 // ===================================
-// =========== 基础平台 ===============
+// =========== 系统平台 ===============
 // =========== ------- ===============
-// ----------- 区域代码 ---------------
+// ----------- 菜单管理 ---------------
 // ===================================
 
 import fetch from '@/utils/fetch'
@@ -14,11 +14,11 @@ import fetch from '@/utils/fetch'
  * 获取区域代码
  * @param query
  */
-export function fetchAreaCodeList (query) {
+export function fetchMenuList (query) {
   return fetch({
-    url: '/basicplatform/areacode2',
+    url: '',
     method: 'get',
-    params: query
+    params: {method: 'account.session.gen'}
   })
 }
 
@@ -26,7 +26,7 @@ export function fetchAreaCodeList (query) {
  * TODO 查询区域代码
  * @param query
  */
-export function searchAreaCodeList (query) {
+export function searchMenuList (query) {
   return fetch({
     url: '/',
     method: 'get',
@@ -38,9 +38,9 @@ export function searchAreaCodeList (query) {
  * TODO 新增区域代码项
  * @param params
  */
-export function createAreaCodeItem (params) {
+export function createMenuItem (params) {
   return fetch({
-    url: '/basicplatform/areacode2',
+    url: '/system/menu',
     method: 'post',
     params: params || {}
   })
@@ -50,9 +50,9 @@ export function createAreaCodeItem (params) {
  * TODO 编辑区域代码项
  * @param params
  */
-export function editAreaCodeItem (params) {
+export function editMenuItem (params) {
   return fetch({
-    url: '/basicplatform/areacode2',
+    url: '/system/menu',
     method: 'put',
     params: params
   })
@@ -62,9 +62,9 @@ export function editAreaCodeItem (params) {
  * TODO 删除区域代码项
  * @param id
  */
-export function deleteAreaCodeItem (id) {
+export function deleteMenuItem (id) {
   return fetch({
-    url: '/basicplatform/areacode2',
+    url: '/system/menu',
     method: 'delete',
     params: {id: id}
   })

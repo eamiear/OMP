@@ -25,6 +25,13 @@ app.use('/api', proxy({
     '^/api': '/'
   }
 }))
+app.use('/ting-common-entry', proxy({
+  target: 'http://118.31.188.148/',
+  changeOrigin: true,
+  pathRewrite: {
+    '^/ting-common-entry': '/'
+  }
+}))
 
 // handle fallback for HTML5 history API
 app.use(require('connect-history-api-fallback')())

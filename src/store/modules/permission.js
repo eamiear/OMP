@@ -34,12 +34,19 @@ function filterAsyncRouter (asyncRouterMap, roles) {
 const permission = {
   state: {
     routers: constantRouterMap,
-    addRouters: []
+    addRouters: [],
+    authorityInfo: null
   },
   mutations: {
     SET_ROUTERS: (state, routers) => {
       state.addRouters = routers
       state.routers = constantRouterMap.concat(routers)
+    },
+    SET_AUTHORITY_INFO: (state, authorityInfo) => {
+      state.authorityInfo = authorityInfo
+    },
+    DEL_AUTHORITY_INFO: (state) => {
+      state.authorityInfo = null
     }
   },
   actions: {

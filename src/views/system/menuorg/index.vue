@@ -1,8 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" placeholder="地域名称" v-model="listQuery.name"></el-input>
-      <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" placeholder="地域编码" v-model="listQuery.code"></el-input>
+      <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" placeholder="菜单名称" v-model="listQuery.name"></el-input>
 
       <el-button class="filter-item" type="primary" icon="search" @click="handleFilter">搜索</el-button>
       <el-button class="filter-item" type="primary" icon="fa-refresh" @click="handleRefresh">刷新</el-button>
@@ -60,7 +59,7 @@
 </style>
 
 <script>
-  import { fetchAreaCodeList, createAreaCodeItem, editAreaCodeItem, deleteAreaCodeItem } from '@/api/basic_areacode'
+  import { fetchMenuList, createMenuItem, editMenuItem, deleteMenuItem } from '@/api/system_menu'
   import TableTree from '@/components/table/TableTree.vue'
 
   export default {
@@ -88,7 +87,7 @@
         },
         columns: [
           {
-            text: '地域名称',
+            text: '菜单名称',
             dataIndex: 'name'
           },
           {
@@ -139,10 +138,10 @@
       // 获取列表
       getList () {
         this.listLoading = true
-        fetchAreaCodeList().then(response => {
+        fetchMenuList().then(response => {
           const result = response.data
           if (response.status === 200 && result.code === 0) {
-            this.dataSource = result.data
+           // this.dataSource = result.data
           }
           this.listLoading = false
         }).catch(err => {
@@ -253,7 +252,7 @@
       // 新增业务操作
       create () {
         const _this = this
-        createAreaCodeItem(this.dialogFormTemp).then((response) => {
+        createMenuItem(this.dialogFormTemp).then((response) => {
           const result = response.data
           if (response.status === 200 && result.code === 0) {
             _this.getList()
@@ -269,7 +268,7 @@
       // 编辑业务操作
       update () {
         const _this = this
-        editAreaCodeItem(this.dialogFormTemp).then((response) => {
+        editMenuItem(this.dialogFormTemp).then((response) => {
           const result = response.data
           if (response.status === 200 && result.code === 0) {
             _this.getList()
@@ -284,7 +283,7 @@
       },
       // 删除业务操作
       remove (id) {
-        return deleteAreaCodeItem(id)
+        return deleteMenuItem(id)
       }
     }
   }

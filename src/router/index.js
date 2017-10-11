@@ -171,6 +171,24 @@ export const constantRouterMap = [
     children: [
       { name: '通用报表', path: 'dashboard', component: require('@/views/dashboard/index') }
     ]
+  },
+  {
+    path: '/merchant',
+    component: Layout,
+    redirect: '/spicyleader',
+    name: '商圈服务商家APP',
+    children: [
+      { name: '麻辣教主', path: 'spicyleader', component: require('@/views/merchant/spicyleader/index') }
+    ]
+  },
+  {
+    path: '/system',
+    component: Layout,
+    redirect: '/menuorg',
+    name: '系统平台',
+    children: [
+      { name: '菜单管理', path: 'menuorg', component: require('@/views/system/menuorg/index') }
+    ]
   }
 ]
 
