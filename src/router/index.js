@@ -178,7 +178,8 @@ export const constantRouterMap = [
     redirect: '/spicyleader',
     name: '商圈服务商家APP',
     children: [
-      { name: '麻辣教主', path: 'spicyleader', component: require('@/views/merchant/spicyleader/index') }
+      { name: '麻辣教主', path: 'spicyleader', component: require('@/views/merchant/spicyleader/index') },
+      { name: '创建', path: 'spicyleader/create', component: require('@/views/merchant/spicyleader/add'), isHidden: true }
     ]
   },
   {

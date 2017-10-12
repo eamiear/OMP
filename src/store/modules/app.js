@@ -3,7 +3,7 @@ import Cookies from 'js-cookie'
 const app = {
   state: {
     sidebar: {
-      opened: !!+(Cookies.get('sidebarStatus') || 0)
+      opened: !+(Cookies.get('sidebarStatus') || 0)
     },
     visitedViews: []
   },

@@ -2,12 +2,14 @@
  * 路由控制、权限控制
  */
 /* eslint-disable no-unused-vars*/
+/* eslint-disable no-extra-boolean-cast*/
 import router from '@/router'
 import store from '@/store'
 import NProgress from 'nprogress' // Progress 进度条
 import 'nprogress/nprogress.css'// Progress 进度条样式
-import { Message } from 'element-ui'
-import { getToken } from '@/common/auth' // 验权
+import { Notification } from 'element-ui'
+import { getToken, getUID } from '@/common/auth' // 验权
+import { EXCEPTION_STATUS_DESC_MAP } from '@/common/constants'
 
 // permission judge
 function hasPermission (roles, permissionRoles) {
@@ -17,25 +19,35 @@ function hasPermission (roles, permissionRoles) {
 }
 
 // register global progress.
-const whiteList = ['/login', '/authredirect', '/system/menuorg']// 不重定向白名单
+const whiteList = ['/login', '/authredirect', '/system/menuorg', '/merchant/spicyleader']// 不重定向白名单
 
 router.beforeEach((to, from, next) => {
   NProgress.start() // 开启Progress
-  if (getToken()) { // 判断是否有token
+  if (getToken() && getUID()) { // 判断是否有token
     if (to.path === '/login') {
       next({ path: '/' })
     } else {
       if (store.getters.roles.length === 0) { // 判断当前用户是否已拉取完user_info信息
         store.dispatch('GetUserInfo').then(res => { // 拉取user_info
           console.log('getUserInfo', res)
-          const result = res.data
+          // const result = res.data
           // const serviceData = result.data
-          const roles = result
-          // TODO 获取菜单数据...
-          store.dispatch('GenerateRoutes', { roles }).then(() => { // 生成可访问的路由表
-            router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
-            next({ ...to }) // hack方法 确保addRoutes已完成
-          })
+          if (res.code !== 0) {
+            // dd
+            Notification({
+              message: EXCEPTION_STATUS_DESC_MAP[res.code] || '获取用户信息失败',
+              type: 'error'
+            })
+            process.env.NODE_ENV === 'production' && console.log(res)
+            next({path: '/login'})
+          } else {
+            const roles = []
+            // TODO 获取菜单数据...
+            store.dispatch('GenerateRoutes', { roles }).then(() => { // 生成可访问的路由表
+              router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
+              next({ ...to }) // hack方法 确保addRoutes已完成
+            })
+          }
           next({ ...to })
         }).catch(() => {
           store.dispatch('FedLogOut').then(() => {

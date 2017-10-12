@@ -1,5 +1,5 @@
 <template>
-	<el-menu class="navbar" mode="horizontal">
+	<el-menu class="navbar breadcrumb-nav" mode="horizontal">
 		<breadcrumb></breadcrumb>
 		<tabs-view></tabs-view>
 	</el-menu>

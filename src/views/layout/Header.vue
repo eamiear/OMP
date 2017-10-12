@@ -23,8 +23,9 @@
                 <img :src="avatar" class="img-circle" alt="User Image">
 
                 <p>
-                  {{name}}
-                  <small>2017.09.22 - 2022.09.22</small>
+                  {{name}}<br>
+                  <span style="font-size:12px; color: rgb(210, 209, 209); text-align: left; display: block;">简介</span>
+                  <small style="font-size: 12px; padding: 3px;">{{introduction}}</small>
                 </p>
               </li>
               <!-- Menu Body -->
@@ -74,7 +75,8 @@
       ...mapGetters([
         'sidebar',
         'name',
-        'avatar'
+        'avatar',
+        'introduction'
       ])
     },
     mounted () {

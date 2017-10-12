@@ -25,7 +25,7 @@ const user = {
       state.token = token
     },
     SET_UID: (state, uid) => {
-      state.UID = uid
+      state.uid = uid
     },
     SET_INTRODUCTION: (state, introduction) => {
       state.introduction = introduction
@@ -55,13 +55,16 @@ const user = {
         loginByUsername(username, userInfo.password).then(response => {
           console.log('login-response---', response)
           const result = response.data
-          const accessToken = result.data.accessToken
-          const uid = result.data.uid
-          setToken(accessToken)
-          setUID(uid)
-          commit('SET_TOKEN', accessToken)
-          commit('SET_TOKEN', uid)
-          resolve()
+          const serviceData = result.data
+          if (response.status === 200 && result.code === 0) {
+            const accessToken = serviceData.accessToken
+            const uid = serviceData.uid
+            setToken(accessToken)
+            setUID(uid)
+            commit('SET_TOKEN', accessToken)
+            commit('SET_UID', uid)
+          }
+          resolve(result)
         }).catch(error => {
           reject(error)
         })
@@ -71,21 +74,19 @@ const user = {
     // 获取用户信息
     GetUserInfo ({ commit, state }) {
       return new Promise((resolve, reject) => {
-        getUserInfo(state.uid).then(response => {
+        getUserInfo(state.uid, state.token).then(response => {
           // TODO
-          response.data = {
-            role: ['admin'],
-            token: 'admin',
-            introduction: '我是超级管理员',
-            avatar: 'http://placehold.it/160x160',
-            name: '苏打水'
+          const result = response.data
+          const serviceData = result.data
+          if (response.status === 200 && result.code === 0) {
+            commit('SET_ROLES', [serviceData])
+            commit('SET_NAME', serviceData.name)
+            commit('SET_AVATAR', serviceData.portrait)
+            commit('SET_INTRODUCTION', serviceData.introduction)
+          } else {
+            console.log(result)
           }
-          const data = response.data
-          commit('SET_ROLES', data.role)
-          commit('SET_NAME', data.name)
-          commit('SET_AVATAR', data.avatar)
-          commit('SET_INTRODUCTION', data.introduction)
-          resolve(response)
+          resolve(result)
         }).catch(error => {
           reject(error)
         })

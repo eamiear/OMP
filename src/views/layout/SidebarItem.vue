@@ -2,7 +2,7 @@
   <div class='menu-wrapper'>
     <template v-for="item in routes">
 
-      <router-link v-if="!item.hidden && item.isSingle && item.children.length>0" :to="item.path+'/'+item.children[0].path">
+      <router-link v-if="!item.isHidden && item.isSingle && item.children.length>0" :to="item.path+'/'+item.children[0].path">
         <el-menu-item :index="item.path+'/'+item.children[0].path" class='single-item'>
           <v-image v-if="item.image" :source="item.image" />
           <icon v-else-if='item.icon' :name="item.icon"></icon>
@@ -26,7 +26,7 @@
             </span>
           </template>
         </template>
-        <template v-for="child in item.children" v-if='!child.hidden'>
+        <template v-for="child in item.children" v-if='!child.isHidden'>
 
           <sidebar-item class='nest-menu' v-if='child.children && child.children.length>0' :routes='[child]'> </sidebar-item>
 

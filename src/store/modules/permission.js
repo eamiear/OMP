@@ -1,5 +1,5 @@
 import { asyncRouterMap, constantRouterMap } from '@/router'
-
+/* eslint-disable no-unused-vars*/
 /**
  * 通过meta.role判断是否与当前用户权限匹配
  * @param roles
@@ -20,13 +20,14 @@ function hasPermission (roles, route) {
  */
 function filterAsyncRouter (asyncRouterMap, roles) {
   const accessedRouters = asyncRouterMap.filter(route => {
-    if (hasPermission(roles, route)) {
-      if (route.children && route.children.length) {
-        route.children = filterAsyncRouter(route.children, roles)
-      }
-      return true
-    }
-    return false
+    // if (hasPermission(roles, route)) {
+    //   if (route.children && route.children.length) {
+    //     route.children = filterAsyncRouter(route.children, roles)
+    //   }
+    //   return true
+    // }
+    // return false
+    return true
   })
   return accessedRouters
 }

@@ -26,6 +26,7 @@
 
 <script>
 // import { isvalidUsername } from '@/utils/validate'
+import { EXCEPTION_STATUS_DESC_MAP } from '@/common/constants'
 
 export default {
   name: 'login',
@@ -55,8 +56,8 @@ export default {
     }
     return {
       loginForm: {
-        username: '13412345678',
-        password: '123456',
+        username: '18922727219',
+        password: 'abc123',
         verification: ''
       },
       loginRules: {
@@ -80,9 +81,17 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('LoginByUsername', this.loginForm).then(() => {
+          this.$store.dispatch('LoginByUsername', this.loginForm).then((response) => {
             this.loading = false
-            this.$router.push({ path: '/' })
+            if (response.code !== 0) {
+              this.$notify({
+                message: EXCEPTION_STATUS_DESC_MAP[response.code] || '登录失败',
+                type: 'error'
+              })
+              this.$router.push({path: '/login'})
+            } else {
+              this.$router.push({ path: '/' })
+            }
           }).catch((err) => {
             this.loading = false
             console.log(err)

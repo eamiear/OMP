@@ -138,11 +138,12 @@
       // 获取列表
       getList () {
         this.listLoading = true
+        console.log('fetchMenuList', fetchMenuList)
         fetchMenuList().then(response => {
           const result = response.data
           console.log('dfd', response)
           if (response.status === 200 && result.code === 0) {
-           // this.dataSource = result.data
+            this.dataSource = result.data
           }
           this.listLoading = false
         }).catch(err => {

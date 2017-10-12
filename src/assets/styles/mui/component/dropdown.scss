@@ -379,7 +379,7 @@ $dropdown-list-item-hover-bg-color: #F5F8FD;
     }
     // Header menu
     > li.user-header {
-      height: 175px;
+      min-height: 175px;
       padding: 10px;
       text-align: center;
       // User image

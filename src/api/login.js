@@ -9,22 +9,25 @@ export function loginByUsername (username, password) {
     password
   }
   return request.post({
-    reqMethod: 'account.login.doLogin',
+    url: '/login',
+    reqMethod: 'operation.login.doLogin',
     params: data
   })
 }
 
 export function logout (accessToken) {
   return request.post({
-    reqMethod: 'account.login.loginOut',
+    url: '/logout',
+    reqMethod: 'operation.login.loginOut',
     params: {accessToken}
   })
 }
 
-export function getUserInfo (uid) {
-  return request.post({
-    reqMethod: 'account.user.findByUid',
-    params: { uid }
+export function getUserInfo (uid, accessToken) {
+  return request.get({
+    url: 'findUserInfo',
+    reqMethod: 'operation.user.getOprUserByUid',
+    params: { uid, accessToken }
   })
 }
 
