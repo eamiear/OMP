@@ -1,7 +1,7 @@
 import request from '@/common/ajax'
 
 export function loginByUsername (username, password) {
-  // TODO
+  // TODO data
   const data = {
     loginType: 2,
     clientType: 5,
