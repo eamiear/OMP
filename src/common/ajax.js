@@ -22,7 +22,7 @@
  */
 
 import { Helper } from '@/common/helper'
-import { getAuthorityInfo, setAuthorityInfo, removeAuthorityInfo } from '@/common/auth'
+import { getAuthorityInfo, setAuthorityInfo, removeAuthorityInfo, getToken } from '@/common/auth'
 import * as Const from '@/common/constants'
 import fetch from '@/common/fetch'
 import md5 from 'blueimp-md5'
@@ -91,7 +91,8 @@ async function request (req) {
   }
   const reqParams = req.params
   const reqMethod = req.reqMethod
-  req['params'] = getReqParams(reqMethod, reqParams)
+  let requestParams = Object.assign({accessToken: getToken()}, reqParams || {})
+  req['params'] = getReqParams(reqMethod, requestParams)
 
   return new Promise((resolve, reject) => {
     fetch(req).then((response) => {

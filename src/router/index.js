@@ -188,7 +188,8 @@ export const constantRouterMap = [
     redirect: '/menuorg',
     name: '系统平台',
     children: [
-      { name: '菜单管理', path: 'menuorg', component: require('@/views/system/menuorg/index') }
+      { name: '菜单管理', path: 'menuorg', component: require('@/views/system/menuorg/index') },
+      { name: '用户管理', path: 'userorg', component: require('@/views/system/menuorg/index') }
     ]
   }
 ]

@@ -1,131 +1,100 @@
 <template>
-  <div class="createPost-container">
+  <div class="spicy-created-wrapper">
     <el-form class="form-container" :model="postForm" :rules="rules" ref="postForm" label-width="80px">
+      <el-row>
+        <el-col :span="14">
+          <el-form-item style="margin-bottom: 10px;" label="标题" prop="value">
+            <el-input type="input" placeholder="标题" v-model="postForm.title"></el-input>
+            <span v-show="postForm.title.length>=26" class='title-prompt'>标题过长，app可能会显示不全</span>
+          </el-form-item>
+        </el-col>
+        <el-col :span="14">
+          <el-form-item style="margin-bottom: 10px;" label="子标题">
+            <el-input type="input" placeholder="子标题" v-model="postForm.childTitle"></el-input>
+            <span v-show="postForm.childTitle.length>=26" class='title-prompt'>子标题过长，app可能会显示不全</span>
+          </el-form-item>
+        </el-col>
 
-      <div class="spicy-created-wrapper">
-        <el-row>
-          <el-col :span="14">
-            <el-form-item style="margin-bottom: 10px;" label="标题" prop="value">
-              <el-input type="input" placeholder="标题" v-model="postForm.title"></el-input>
-              <span v-show="postForm.title.length>=26" class='title-prompt'>标题过长，app可能会显示不全</span>
-            </el-form-item>
-          </el-col>
-          <el-col :span="14">
-            <el-form-item style="margin-bottom: 10px;" label="子标题">
-              <el-input type="input" placeholder="子标题" v-model="postForm.childTitle"></el-input>
-              <span v-show="postForm.childTitle.length>=26" class='title-prompt'>子标题过长，app可能会显示不全</span>
-            </el-form-item>
-          </el-col>
+        <el-col :span="14">
+          <el-row>
+            <el-col :span="8">
+              <el-form-item label="主题" class="postInfo-container-item">
+                <el-select clearable class="filter-item" placeholder="主题" v-model="postForm.tagName" @visible-change="fetchThemeList">
+                  <el-option v-for="item in themes" :key="item" :label="item" :value="item"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="期数" class="postInfo-container-item">
+                <el-input type="input" placeholder="第一期" v-model="postForm.periods"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-col>
+        <el-col :span="24">
+          <el-form-item style="margin-bottom: 10px;" label="封面">
+            <Upload v-model="postForm.coverImage"></Upload>
+          </el-form-item>
+        </el-col>
+        <el-col :span="14">
+          <el-form-item style="margin-bottom: 10px;" label="摘要">
+            <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 8}" placeholder="请输入摘要信息" v-model="postForm.abstracts"></el-input>
+            <span class="word-counter" v-show="abstractCount">{{abstractCount}}/120字</span>
+          </el-form-item>
+        </el-col>
 
-          <el-col :span="24">
-            <el-row>
-              <el-col :span="8">
-                <el-form-item label="主题" class="postInfo-container-item" prop="value">
-                  <el-select clearable class="filter-item" placeholder="主题" v-model="postForm.tagName">
-                    <el-option v-for="item in themes" :key="item" :label="item" :value="item"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-
-              <el-col :span="8">
-                <el-form-item label="发布时间:" class="postInfo-container-item">
-                  <el-date-picker v-model="postForm.displayTime" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间">
-                  </el-date-picker>
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </el-col>
-        </el-row>
-
-        <el-form-item style="margin-bottom: 40px;" label="摘要">
-          <el-input type="textarea" :rows="4" autosize placeholder="请输入摘要信息" v-model="postForm.abstracts"></el-input>
-          <span class="word-counter" v-show="abstractCount">{{abstractCount}}字</span>
-        </el-form-item>
-
-        <div class="editor-container">
-          <!--<tinymce :height=400 ref="editor" v-model="postForm.content"></tinymce>-->
-        </div>
-
-        <div style="margin-bottom: 20px;">
-          <!--<Upload v-model="postForm.image_uri"></Upload>-->
-        </div>
-      </div>
+        <el-col :span="18">
+          <el-form-item label="详情内容" style="margin-bottom: 50px">
+            <tinymce :height=400 ref="editor" v-model="postForm.content"></tinymce>
+          </el-form-item>
+        </el-col>
+        <el-col :span="14" style="text-align: right;">
+          <el-button type="default" style="margin-right: 10px;" @click.native.prevent="handleSubmit">取消</el-button>
+          <el-button type="primary" @click.native.prevent="handleSubmit">发布</el-button>
+        </el-col>
+      </el-row>
     </el-form>
-
   </div>
 </template>
 
 <script>
-//  import Tinymce from '@/components/Tinymce'
-//  import Upload from '@/components/Upload/singleImage3'
+  import Tinymce from '@/components/Tinymce'
+  import Upload from '@/components/Upload/singleImage3'
 //  import MDinput from '@/components/MDinput'
 //  import Multiselect from 'vue-multiselect'// 使用的一个多选框组件，element-ui的select不能满足所有需求
 //  import 'vue-multiselect/dist/vue-multiselect.min.css'// 多选框组件css
 //  import Sticky from '@/components/Sticky' // 粘性header组件
-  import { validateURL } from '@/utils/validate'
+//  import { validateURL } from '@/utils/validate'
   import { fetchArticle } from '@/api/article'
-  import { userSearch } from '@/api/remoteSearch'
 
   export default {
     name: 'articleDetail',
-//    components: { Tinymce, MDinput, Upload },
+    components: { Tinymce, Upload },
     data () {
       const validateRequire = (rule, value, callback) => {
-        if (value === '') {
-          this.$message({
-            message: rule.field + '为必传项',
-            type: 'error'
-          })
-          callback(null)
-        } else {
-          callback()
-        }
-      }
-      const validateSourceUri = (rule, value, callback) => {
-        if (value) {
-          if (validateURL(value)) {
-            callback()
-          } else {
-            this.$message({
-              message: '外链url填写不正确',
-              type: 'error'
-            })
-            callback(null)
-          }
-        } else {
-          callback()
-        }
+        callback(!value && new Error(rule.field + '为必传项'))
       }
       return {
         postForm: {
           title: '', // 文章题目
           childTitle: '',
-          tagName: '',
+          tagName: '',  // 主题
+          periods: '',  // 期数
           content: '', // 文章内容
-          displayTime: undefined,
           abstracts: '',
-          content_short: '', // 文章摘要
-          source_uri: '', // 文章外链
-          image_uri: '', // 文章图片
-          source_name: '', // 文章外部作者
-          display_time: undefined, // 前台展示时间
-          id: undefined,
-          platforms: ['a-platform']
+          coverImage: '', // 文章图片
+          id: undefined
         },
         themes: ['时尚', '美食', '其他'],
+        abstractTotal: 120,
         fetchSuccess: true,
         loading: false,
-        userLIstOptions: [],
-        platformsOptions: [
-          { key: 'a-platform', name: 'a-platform' },
-          { key: 'b-platform', name: 'b-platform' },
-          { key: 'c-platform', name: 'c-platform' }
-        ],
         rules: {
-          image_uri: [{ validator: validateRequire }],
-          title: [{ validator: validateRequire }],
-          content: [{ validator: validateRequire }],
-          source_uri: [{ validator: validateSourceUri, trigger: 'blur' }]
+          title: [{ require: true, validator: validateRequire }],
+          tagName: [{ require: true, validator: validateRequire }],
+          periods: [{ require: true, validator: validateRequire }],
+          coverImage: [{ validator: validateRequire }],
+          content: [{ validator: validateRequire }]
         }
       }
     },
@@ -143,6 +112,13 @@
         this.fetchData()
       }
     },
+    watch: {
+      'postForm.abstracts': function (val) {
+        if (this.abstractCount >= this.abstractTotal) {
+          this.$nextTick(() => { this.postForm.abstracts = val.slice(0, this.abstractTotal) })
+        }
+      }
+    },
     methods: {
       fetchData () {
         fetchArticle().then(response => {
@@ -152,8 +128,10 @@
           console.log(err)
         })
       },
-      submitForm () {
-        this.postForm.display_time = parseInt(this.display_time / 1000)
+      fetchThemeList () {
+        // TODO
+      },
+      handleSubmit () {
         console.log(this.postForm)
         this.$refs.postForm.validate(valid => {
           if (valid) {
@@ -187,15 +165,6 @@
           duration: 1000
         })
         this.postForm.status = 'draft'
-      },
-      getRemoteUserList (query) {
-        userSearch(query).then(response => {
-          if (!response.data.items) return
-          console.log(response)
-          this.userLIstOptions = response.data.items.map(v => ({
-            key: v.name
-          }))
-        })
       }
     }
   }
@@ -204,44 +173,17 @@
 <style rel="stylesheet/scss" lang="scss" scoped>
   .spicy-created-wrapper{
     padding:15px 10px;
-  }
-  /*@import "src/styles/mixin.scss";*/
-  /*.title-prompt{
-    position: absolute;
-    right: 0;
-    font-size: 12px;
-    top:10px;
-    color:#ff4949;
-  }
-  .createPost-container {
-    position: relative;
-    .createPost-main-container {
-      padding: 40px 45px 20px 50px;
-      .postInfo-container {
-        position: relative;
-        margin-bottom: 10px;
-        .postInfo-container-item {
-          float: left;
-        }
-      }
-      .editor-container {
-        min-height: 500px;
-        margin: 0 0 30px;
-        .editor-upload-btn-container {
-          text-align: right;
-          margin-right: 10px;
-          .editor-upload-btn {
-            display: inline-block;
-          }
-        }
-      }
-    }
-    .word-counter {
-      width: 40px;
+
+    .word-counter{
+      font-size: 12px;
+      color: #999;
       position: absolute;
-      right: -10px;
-      top: 0px;
+      right: 0;
+      bottom: -33px;
     }
-  }*/
+    .editor-container{
+      margin: 0 80px 10px;
+    }
+  }
 </style>
 

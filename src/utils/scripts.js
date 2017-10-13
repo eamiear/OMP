@@ -3,5 +3,6 @@
  */
 import 'bootstrap'
 import 'jquery-slimscroll'
+// import 'tinymce'
 // import 'admin-lte/dist/js/app'
 // import '@/common/adminlte'
