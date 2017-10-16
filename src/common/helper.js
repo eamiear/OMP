@@ -96,17 +96,41 @@ export const Helper = {
   },
   deepSort: function (params) {
     for (let k in params) {
-      if (typeof (params[k]) === 'object' && params[k].length >= 0) { // 数组
+      if (this.isArray(params[k])) { // 数组
         for (let i = 0; i < params[k].length; i++) {
-          if (typeof (params[k][i]) === 'object') {
+          if (this.isObject(params[k][i])) {
             params[k][i] = this.deepSort(params[k][i])
           }
         }
-      } else if (typeof (params[k]) === 'object') { // JSON
+      } else if (this.isObject(params[k])) { // JSON
         params[k] = this.deepSort(params[k])
       }
     }
     return this.sort(params)
+  },
+  parseTime: function (time, fmt) {
+    let date
+    fmt = fmt || 'yyyy-MM-dd hh:mm:ss'
+    date = this.isObject(time) ? time : new Date(time)
+    const o = {
+      'M+': date.getMonth() + 1,
+      'd+': date.getDate(),
+      'h+': date.getHours(),
+      'm+': date.getMinutes(),
+      's+': date.getSeconds(),
+      'q+': Math.floor((date.getMonth() + 3) / 3),
+      'S': date.getMilliseconds()
+    }
+    if (/(y+)/.test(fmt)) {
+      fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length))
+    }
+    for (let k in o) {
+      if (new RegExp('(' + k + ')').test(fmt)) {
+        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k])
+          : (('00' + o[k]).substr(('' + o[k]).length)))
+      }
+    }
+    return fmt
   }
 }
 

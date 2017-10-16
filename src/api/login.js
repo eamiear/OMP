@@ -9,7 +9,7 @@ export function loginByUsername (username, password) {
     password
   }
   return request.post({
-    url: '/login',
+    // url: '/login',
     reqMethod: 'operation.login.doLogin',
     params: data
   })
@@ -17,7 +17,7 @@ export function loginByUsername (username, password) {
 
 export function logout (accessToken) {
   return request.post({
-    url: '/logout',
+    // url: '/logout',
     reqMethod: 'operation.login.loginOut',
     params: {accessToken}
   })
@@ -25,7 +25,7 @@ export function logout (accessToken) {
 
 export function getUserInfo (uid, accessToken) {
   return request.get({
-    url: 'findUserInfo',
+    // url: 'findUserInfo',
     reqMethod: 'operation.user.getOprUserByUid',
     params: { uid, accessToken }
   })

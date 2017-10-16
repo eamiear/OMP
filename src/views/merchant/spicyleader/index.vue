@@ -43,13 +43,13 @@
 
       <el-table-column align="center" label="主题">
         <template scope="scope">
-          <span>{{scope.row.theme}}</span>
+          <span>{{scope.row.tagName}}</span>
         </template>
       </el-table-column>
 
       <el-table-column align="center" label="创建时间">
         <template scope="scope">
-          <span>{{scope.row.createTime}}</span>
+          <span>{{scope.row.createTime | dateFormat}}</span>
         </template>
       </el-table-column>
 
@@ -61,7 +61,7 @@
 
       <el-table-column align="center" label="更新时间">
         <template scope="scope">
-          <span>{{scope.row.updateTime}}</span>
+          <span>{{scope.row.updateTime | dateFormat}}</span>
         </template>
       </el-table-column>
 
@@ -82,7 +82,7 @@
           <el-button size="small" @click="handlePreview(scope.row)">预览</el-button>
           <el-button v-if="scope.row.status===0" size="small" type="success" @click="handlePublish(scope.row)">发布</el-button>
           <el-button type="success" size="small" >编辑</el-button>
-          <el-button type="danger" size="small" @click="handleDelRecord(scope.row)">删除</el-button>
+          <el-button type="danger" size="small" @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -120,9 +120,11 @@
 </style>
 
 <script>
-  import { fetchMenuList, createMenuItem, editMenuItem, deleteMenuItem } from '@/api/system_menu'
-  import { fetchSpicyLeaderList } from '@/api/spicyleader'
-  import TableTree from '@/components/table/TableTree.vue'
+//  import { fetchMenuList, createMenuItem, editMenuItem, deleteMenuItem } from '@/api/system_menu'
+  import * as SpicyLeader from '@/api/spicyleader'
+  import { success, error, info } from '@/utils/dialog'
+  import TableTree from '@/components/table/TableTree'
+  import { dateFormat } from '@/filters'
 
   export default {
     name: 'areaCode',
@@ -194,7 +196,8 @@
       },
       publishStatusFilter (status) {
         // TODO
-      }
+      },
+      dateFormat
     },
     created () {
       this.getList()
@@ -219,23 +222,13 @@
       // 获取列表
       getList () {
         this.listLoading = true
-        console.log('fetchMenuList', fetchMenuList)
-        fetchSpicyLeaderList().then(response => {
+        SpicyLeader.fetchSpicyLeaderList().then(response => {
           const result = response.data
-          console.log('dfd', response)
           if (response.status === 200 && result.code === 0) {
             this.list = result.data.infos
             this.total = result.data.total
           }
           this.listLoading = false
-        }).catch(err => {
-          console.log(err)
-          this.$notify({
-            title: '失败',
-            message: '获取数据失败',
-            type: 'error',
-            duration: 2000
-          })
         })
       },
       // 查询
@@ -243,17 +236,23 @@
         this.getList()
       },
       handleModifyStatus (row, status) {
-        this.$message({
-          message: '操作成功',
-          type: 'success'
-        })
+        success('操作成功')
         row.status = status
       },
       handlePreview (row) {
         // TODO preview record
       },
       handlePublish (row, action) {
-        // TODO publish record
+        const _this = this
+        SpicyLeader.publishSpicyLeader(row.id, 1).then((response) => {
+          const result = response.data
+          if (response.status === 200 && result.code === 0) {
+            _this.getList()
+            success('发布成功')
+          } else {
+            error('发布失败')
+          }
+        })
       },
       handleDelRecord (row) {
         // TODO delete record
@@ -325,66 +324,53 @@
           _this.remove(row.id).then((response) => {
             const result = response.data
             if (response.status === 200 && result.code === 0) {
-              _this.delNodeById(_this.dataSource, row.id)
-              this.$message({
-                type: 'success',
-                message: '删除成功!'
+              _this.remove(row.id).then(() => {
+                success('删除成功!')
+                _this.handleRefresh()
               })
             } else {
-              this.$message({
-                type: 'error',
-                message: '删除失败!'
-              })
+              error('删除失败')
             }
-          }).catch((err) => {
-            this.$message({
-              type: 'error',
-              message: '服务出错'
-            })
-            console.log(err)
           })
         }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
+          info('已取消删除')
         })
       },
       // 新增业务操作
       create () {
-        const _this = this
-        createMenuItem(this.dialogFormTemp).then((response) => {
-          const result = response.data
-          if (response.status === 200 && result.code === 0) {
-            _this.getList()
-          }
-        }).catch(() => {
-          this.$message({
-            type: 'error',
-            message: '新增失败'
-          })
-        })
+//        const _this = this
+//        createMenuItem(this.dialogFormTemp).then((response) => {
+//          const result = response.data
+//          if (response.status === 200 && result.code === 0) {
+//            _this.getList()
+//          }
+//        }).catch(() => {
+//          this.$message({
+//            type: 'error',
+//            message: '新增失败'
+//          })
+//        })
         this.dialogFormVisible = false
       },
       // 编辑业务操作
       update () {
-        const _this = this
-        editMenuItem(this.dialogFormTemp).then((response) => {
-          const result = response.data
-          if (response.status === 200 && result.code === 0) {
-            _this.getList()
-          }
-        }).catch(() => {
-          this.$message({
-            type: 'error',
-            message: '编辑失败'
-          })
-        })
+//        const _this = this
+//        editMenuItem(this.dialogFormTemp).then((response) => {
+//          const result = response.data
+//          if (response.status === 200 && result.code === 0) {
+//            _this.getList()
+//          }
+//        }).catch(() => {
+//          this.$message({
+//            type: 'error',
+//            message: '编辑失败'
+//          })
+//        })
         this.dialogFormVisible = false
       },
       // 删除业务操作
       remove (id) {
-        return deleteMenuItem(id)
+        return SpicyLeader.deleteSpicyLeader(id)
       }
     }
   }

@@ -28,11 +28,13 @@ export const TOKEN_RENEW = 999500007              // 令牌续约
 
 // Common Exception Code
 export const CREATE_SERVICE_FAIL = 99990003       // 创建业务异常新新实例失败
+export const SERVER_CRASH = 99990019              // 系统不舒服
 export const SERVICE_NOT_EXIST = 99990021         // 调用服务不存在
 export const SERVICE_TYPE_ERROR = 99990022        // 服务类型错误
 
 export const EXCEPTION_STATUS_DESC_MAP = {
   '99990003': '创建业务异常新新实例失败',
+  '99990019': '系统不舒服，请稍后再试',
   '99990021': '调用服务不存在',
   '99990022': '服务类型错误',
   '999500005': '用户未登录',

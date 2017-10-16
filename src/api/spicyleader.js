@@ -15,8 +15,8 @@ import request from '@/common/ajax'
  * @param query
  */
 export function fetchSpicyLeaderList (query) {
-  return request.get({
-    url: '/spicyleader/list',
+  return request.post({
+    // url: '/spicyleader/list',
     reqMethod: 'popularize.magazine.operate.getAllMagazine',
     params: {}
   })
@@ -35,6 +35,13 @@ export function editSpicyLeader (params) {
     // url: '/spicyleader/edit',
     reqMethod: 'popularize.magazine.operate.updateMagazine',
     params: params
+  })
+}
+
+export function publishSpicyLeader (id, status) {
+  return request.post({
+    reqMethod: 'popularize.magazine.operate.updateMagazine',
+    params: {id, status}
   })
 }
 

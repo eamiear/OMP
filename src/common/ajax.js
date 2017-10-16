@@ -25,6 +25,7 @@ import { Helper } from '@/common/helper'
 import { getAuthorityInfo, setAuthorityInfo, removeAuthorityInfo, getToken } from '@/common/auth'
 import * as Const from '@/common/constants'
 import fetch from '@/common/fetch'
+import { error } from '@/utils/dialog'
 import md5 from 'blueimp-md5'
 
 /*eslint-disable no-useless-call*/
@@ -106,6 +107,8 @@ async function request (req) {
         })
       }
     }).catch((response) => {
+      error('操作失败')
+      console.log('服务出错\n\t error path: \n', location.href, response)
       reject(response)
     })
   })
