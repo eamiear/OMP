@@ -110,7 +110,7 @@
     <el-dialog :title="textMap[dialogStatus]" size="40" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
       <el-form class="small-space" autoComplete="on"
                :model="voteModel"
-               ref="themeForm"
+               ref="voteForm"
                label-position="left" label-width="80px" style='margin-left:50px;'>
 
         <el-form-item label="投票名称" prop="title" style="width: 60%;"
@@ -559,17 +559,25 @@
       // create vote item
       createVote () {
         const _this = this
-        SpicyLeader.createVote(this.voteModel).then(response => {
-          Utopa.isValidRequest(response) && _this.getList()
-          _this.dialogFormVisible = false
+        _this.$refs.voteForm.validate(valid => {
+          if (valid) {
+            SpicyLeader.createVote(_this.voteModel).then(response => {
+              Utopa.isValidRequest(response) && _this.getList()
+              _this.dialogFormVisible = false
+            })
+          }
         })
       },
       // update vote item
       updateVote () {
         const _this = this
-        SpicyLeader.updateVote(this.voteModel).then(response => {
-          Utopa.isValidRequest(response) && _this.getList()
-          _this.dialogFormVisible = false
+        _this.$refs.voteForm.validate(valid => {
+          if (valid) {
+            SpicyLeader.updateVote(_this.voteModel).then(response => {
+              Utopa.isValidRequest(response) && _this.getList()
+              _this.dialogFormVisible = false
+            })
+          }
         })
       }
     }
