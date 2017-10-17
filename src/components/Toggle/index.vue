@@ -1,5 +1,5 @@
 <template>
-    <a href="#" @click="toggleClick" class="sidebar-toggle" :class="{'is-active':isActive}" role="button">
+    <a href="javascript:;" @click="toggleClick" class="sidebar-toggle" :class="{'is-active':isActive}" role="button">
         <span class="sr-only">Toggle navigation</span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>

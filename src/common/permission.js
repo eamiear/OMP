@@ -39,7 +39,10 @@ router.beforeEach((to, from, next) => {
             })
             if (EXCEPTION_STATUS_DESC_MAP[res.code] === SERVER_CRASH) {
               // TODO convert to 500
-              next({path: '/404'})
+              // next({path: '/404'})
+              store.dispatch('FedLogOut').then(() => {
+                next({ path: '/login' })
+              })
             }
             process.env.NODE_ENV === 'production' && console.log(res)
             next({path: '/login'})

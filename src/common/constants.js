@@ -1,5 +1,6 @@
 /**
  * Created by skz on 2017/10/10 17:48
+ * Constants
  */
 
 export const AUTHORITY_KEY = 'account_session_authinfo'

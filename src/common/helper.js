@@ -1,5 +1,6 @@
 /**
  * Created by skz on 2017/10/10 18:03
+ * Common Method
  */
 var _toString = Object.prototype.toString
 
@@ -131,6 +132,20 @@ export const Helper = {
       }
     }
     return fmt
+  },
+  parseNumberToChinese: function (number) {
+    return {
+      0: '零',
+      1: '一',
+      2: '二',
+      3: '三',
+      4: '四',
+      5: '五',
+      6: '六',
+      7: '七',
+      8: '八',
+      9: '久'
+    }[number]
   }
 }
 

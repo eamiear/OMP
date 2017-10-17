@@ -175,11 +175,19 @@ export const constantRouterMap = [
   {
     path: '/merchant',
     component: Layout,
-    redirect: '/spicyleader',
+    // redirect: '/spicyleader',
     name: '商圈服务商家APP',
     children: [
-      { name: '麻辣教主', path: 'spicyleader', component: require('@/views/merchant/spicyleader/index') },
-      { name: '新增文章', path: 'spicyleader/create', component: require('@/views/merchant/spicyleader/add') },
+      {
+        name: '麻辣教主',
+        path: '/merchant/spicyleader',
+        redirect: '/merchant/spicyleader/list',
+        component: require('@/views/merchant/spicyleader/index'),
+        children: [
+          { name: '期数列表', path: 'list', component: require('@/views/merchant/spicyleader/list') },
+          { name: '新增期数', path: 'create', component: require('@/views/merchant/spicyleader/add') }
+        ]
+      },
       {name: '主题管理', path: 'theme', component: require('@/views/merchant/theme/index')}
     ]
   },
@@ -190,7 +198,8 @@ export const constantRouterMap = [
     name: '系统平台',
     children: [
       { name: '菜单管理', path: 'menuorg', component: require('@/views/system/menuorg/index') },
-      { name: '用户管理', path: 'userorg', component: require('@/views/system/menuorg/index') }
+      { name: '用户管理', path: 'userorg', component: require('@/views/system/menuorg/index') },
+      { name: '评论管理', path: 'comments', component: require('@/views/system/menuorg/index') }
     ]
   }
 ]

@@ -152,12 +152,6 @@
                   message: EXCEPTION_STATUS_DESC_MAP[result.code] || '新增失败'
                 })
               }
-            }).catch((err) => {
-              console.log(err)
-              _this.$message({
-                type: 'error',
-                message: err
-              })
             })
           } else {
             return false

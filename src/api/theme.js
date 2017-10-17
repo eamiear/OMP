@@ -48,3 +48,17 @@ export function fetchThemeItemById (id) {
     params: {id}
   })
 }
+
+export function searchThemeByName (name) {
+  return request.post({
+    reqMethod: 'popularize.magazine.operate.getMagazineTag',
+    params: {name}
+  })
+}
+
+export function searchThemeById (id) {
+  return request.post({
+    reqMethod: 'popularize.magazine.operate.getMagazineTag',
+    params: {id}
+  })
+}

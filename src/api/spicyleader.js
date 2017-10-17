@@ -96,6 +96,20 @@ export function fetchVoteByMagazineId (mId) {
   })
 }
 
+export function deleteVote (id) {
+  return request.post({
+    reqMethod: 'popularize.magazine.operate.deleteMagazineVote',
+    params: {id}
+  })
+}
+
+export function enableVote (status) {
+  return request.post({
+    reqMethod: 'popularize.magazine.operate.enableMagazineVote',
+    params: {status}
+  })
+}
+
 // ----------- Vote Item Service ---------------
 // =============================================
 
@@ -131,44 +145,9 @@ export function fetchVoteItemById (id) {
   })
 }
 
-// ----------- Theme Item Service ---------------
-// =============================================
-
-export function fetchSpicyThemeList () {
+export function deleteVoteItem (id) {
   return request.post({
-    url: '/spicyleader/theme/fetch',
-    reqMethod: 'popularize.magazine.operate.getAllTag'
-  })
-}
-
-export function createSpicyThemeItem (params) {
-  return request.post({
-    url: '/spicyleader/theme/create',
-    reqMethod: 'popularize.magazine.operate.createTag',
-    params: params
-  })
-}
-
-export function updateSpicyThemeItem (params) {
-  return request.post({
-    url: '/spicyleader/theme/update',
-    reqMethod: 'popularize.magazine.operate.updateTag',
-    params: params
-  })
-}
-
-export function deleteSpicyThemeItem (id) {
-  return request.post({
-    url: '/spicyleader/theme/delete',
-    reqMethod: 'popularize.magazine.operate.deleteTag',
-    params: {id}
-  })
-}
-
-export function fetchSpicyThemeItemById (id) {
-  return request.post({
-    url: '/spicyleader/theme/select',
-    reqMethod: 'popularize.magazine.operate.selectTag',
+    reqMethod: 'popularize.magazine.operate.deleteMagazineVoteOptions',
     params: {id}
   })
 }
