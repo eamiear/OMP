@@ -92,9 +92,9 @@
         loading: false,
         rules: {
           title: [{ require: true, validator: validateRequire, message: '请输入标题' }],
-          tagId: [{ type: 'number', validator: validateRequire, require: true, message: '请选择主题', trigger: 'change' }],
-          periods: [{ require: true, validator: validateRequire, message: '请填写期数' }]/*,
-          coverImage: [{ require: true, validator: validateRequire, message: '请上传封面', tigger: 'change' }]*/
+//          tagId: [{ require: true, validator: validateRequire, message: '请选择主题' }],
+          periods: [{ require: true, validator: validateRequire, message: '请填写期数' }],
+          coverImage: [{ require: true, validator: validateRequire, message: '请上传封面', tigger: 'change' }]
         }
       }
     },

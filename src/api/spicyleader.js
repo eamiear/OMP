@@ -75,7 +75,7 @@ export function createVote (params) {
 export function updateVote (params) {
   return request.post({
     // url: 'spicyleader/vote/update',
-    reqMethod: 'popularize.magazine.operate.updateMagazineVote',
+    reqMethod: 'popularize.magazine.operate.saveMagazineVote',
     params: params
   })
 }
@@ -88,7 +88,7 @@ export function fetchVoteById (vid) {
   })
 }
 
-export function fetchVoteByMagazineId (mId) {
+export function fetchVotesByMagazineId (mId) {
   return request.post({
     // url: 'spicyleader/vote/fetchByMid',
     reqMethod: 'popularize.magazine.operate.selectMagazineVoteByMagazineId',
