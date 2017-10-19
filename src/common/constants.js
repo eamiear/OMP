@@ -3,6 +3,10 @@
  * Constants
  */
 
+// =======================================================================
+// ------------------------- System Code About ---------------------------
+// =======================================================================
+// system constants
 export const AUTHORITY_KEY = 'account_session_authinfo'
 
 export const INTERFACE_VERSION = '1.0'
@@ -13,6 +17,15 @@ export const USER_ID_KEY = 'utopa_uid_key'
 
 export const SESSION_REQUEST = 'account.session.gen'
 
+// third part constants
+// TODO should be config in the server system
+export const QINIU_IMAGE_REQUEST_BASEURL = 'http://ox2m2b48s.bkt.clouddn.com/'
+
+export const QINIU_UPLOAD_URL = 'http://upload-z2.qiniu.com'
+
+// =======================================================================
+// ------------------------- Status Code About ---------------------------
+// =======================================================================
 // request status code
 export const REQUEST_SUCCESS = 0                  // 请求成功
 export const REQUEST_FAIL = 1                     // 请求失败
@@ -40,5 +53,24 @@ export const EXCEPTION_STATUS_DESC_MAP = {
   '99990022': '服务类型错误',
   '999500005': '用户未登录',
   '220100004': '用户名或密码错误'
+}
+
+// =======================================================================
+// ------------------------- Service Code About --------------------------
+// =======================================================================
+
+export const CLIENT_TYPES = {
+  UTOPA: 1,
+  LITTLEQ: 2,
+  LIBER: 3,
+  DESIGNER: 4,
+  OPERATION_PLATFORM: 5
+}
+export const CLIENT_TYPES_MAP = {
+  1: '优托邦',
+  2: '小Q',
+  3: 'liber',
+  4: '设计师',
+  5: '运营平台'
 }
 

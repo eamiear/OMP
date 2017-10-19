@@ -16,7 +16,6 @@ import request from '@/common/ajax'
  */
 export function fetchSpicyLeaderList (query) {
   return request.post({
-    // url: '/spicyleader/list',
     reqMethod: 'popularize.magazine.operate.getAllMagazine',
     params: {}
   })
@@ -24,7 +23,6 @@ export function fetchSpicyLeaderList (query) {
 
 export function createSpicyLeader (params) {
   return request.post({
-    // url: '/spicyleader/create',
     reqMethod: 'popularize.magazine.operate.saveMagazine',
     params: params
   })
@@ -32,7 +30,6 @@ export function createSpicyLeader (params) {
 
 export function editSpicyLeader (params) {
   return request.post({
-    // url: '/spicyleader/edit',
     reqMethod: 'popularize.magazine.operate.updateMagazine',
     params: params
   })
@@ -47,7 +44,6 @@ export function publishSpicyLeader (id, status) {
 
 export function deleteSpicyLeader (id) {
   return request.post({
-    // url: 'spicyleader/delete',
     reqMethod: 'popularize.magazine.operate.deleteMagazine',
     params: {id}
   })
@@ -55,7 +51,6 @@ export function deleteSpicyLeader (id) {
 
 export function fetchSpicyLeaderById (id) {
   return request.get({
-    // url: 'spicyleader/fetch',
     reqMethod: 'popularize.magazine.operate.selectMagazine',
     params: {id}
   })
@@ -66,7 +61,6 @@ export function fetchSpicyLeaderById (id) {
 
 export function createVote (params) {
   return request.post({
-    // url: 'spicyleader/vote/create',
     reqMethod: 'popularize.magazine.operate.saveMagazineVote',
     params: params
   })
@@ -74,7 +68,6 @@ export function createVote (params) {
 
 export function updateVote (params) {
   return request.post({
-    // url: 'spicyleader/vote/update',
     reqMethod: 'popularize.magazine.operate.saveMagazineVote',
     params: params
   })
@@ -82,17 +75,15 @@ export function updateVote (params) {
 
 export function fetchVoteById (vid) {
   return request.post({
-    // url: 'spicyleader/vote/fetch',
     reqMethod: 'popularize.magazine.operate.selectMagazineVote',
     params: {id: vid}
   })
 }
 
-export function fetchVotesByMagazineId (mId) {
+export function fetchVotesByMagazineId (magazineId) {
   return request.post({
-    // url: 'spicyleader/vote/fetchByMid',
     reqMethod: 'popularize.magazine.operate.selectMagazineVoteByMagazineId',
-    params: {id: mId}
+    params: {magazineId: magazineId}
   })
 }
 
@@ -115,7 +106,6 @@ export function enableVote (status) {
 
 export function fetchVoteItemList (voteId) {
   return request.get({
-    // url: '/spicyleaderitem/list',
     reqMethod: 'popularize.magazine.operate.getAllMagazineVoteOptions',
     params: {voteId}
   })
@@ -123,7 +113,6 @@ export function fetchVoteItemList (voteId) {
 
 export function createVoteItem (params) {
   return request.post({
-    // url: 'spicyleader/voteitem/create',
     reqMethod: 'popularize.magazine.operate.saveMagazineVoteOptions',
     params: params
   })
@@ -131,7 +120,6 @@ export function createVoteItem (params) {
 
 export function updateVoteItem (params) {
   return request.post({
-    // url: 'spicyleader/voteitem/update',
     reqMethod: 'popularize.magazine.operate.updateMagazineVoteOptions',
     params: params
   })
@@ -139,7 +127,6 @@ export function updateVoteItem (params) {
 
 export function fetchVoteItemById (id) {
   return request.post({
-    // url: 'spicyleader/voteitem/fetchById',
     reqMethod: 'popularize.magazine.operate.selectMagazineVoteOptions',
     params: {id}
   })

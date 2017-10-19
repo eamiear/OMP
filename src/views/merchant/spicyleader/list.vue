@@ -108,9 +108,6 @@
     </div>
     <!-- pagination end -->
 
-    <!--<div class="vote-wrapper">-->
-      <!--<Vote></Vote>-->
-    <!--</div>-->
     <!-- Vote operation start-->
     <el-dialog :title="textMap[dialogStatus]" size="40" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
       <el-form class="small-space" autoComplete="on"
@@ -126,7 +123,7 @@
 
         <el-form-item label="截止时间" prop="overdue"
                       :rules="{type: 'date', required: true, message: '请选择截止日期时间', trigger: 'change'}">
-          <el-date-picker v-model="voteModel.overdue" type="datetime" placeholder="选择截止日期时间"></el-date-picker>
+          <el-date-picker v-model="voteModel.overdue" format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="选择截止日期时间"></el-date-picker>
         </el-form-item>
 
         <el-form-item v-for="(vote, index) in voteModel.voteItemList"
@@ -136,23 +133,18 @@
                       :rules="{required: true, message: '选项不能为空', trigger: 'blur'}">
 
           <el-input style="width: 50%;" v-model="vote.title"></el-input>
-          <!--<el-button @click.prevent="">上传图片</el-button>-->
-          <!--<el-upload class="vote-avatar-uploader"-->
-                     <!--:data="voteData"-->
-                     <!--:multiple="false"-->
-                     <!--v-model="voteImageValue"-->
-                     <!--:show-file-list="false"-->
-                     <!--:action="voteAction"-->
-                     <!--accept="image/*"-->
-                     <!--:on-success="handleVoteAvatarScucess"-->
-                     <!--:before-upload="beforeVoteAvatarUpload">-->
-            <!--<el-button size="small">点击上传</el-button>-->
-          <!--</el-upload>-->
-          <!--<div class="vote-avatar-preview">-->
-            <!--<div class="avatar-preview-wrapper" v-show="voteImageUrl.length>1">-->
-              <!--<img :src="voteImageUrl">-->
-            <!--</div>-->
-          <!--</div>-->
+          <MultiUpload
+            :extra="vote"
+            :postData="voteData"
+            :requestUrl="voteAction"
+            :onSuccess="handleVoteAvatarScucess"
+            :onBeforeUpload="beforeVoteAvatarUpload"
+            uploadText="头像上传"></MultiUpload>
+          <div class="vote-avatar-preview">
+            <div class="avatar-preview-wrapper" v-show="vote.image">
+              <img :src="vote.image">
+            </div>
+          </div>
           <span class="link-type clean" @click.prevent="removeVoteItem(vote)">删除选项</span>
         </el-form-item>
         <hr class="margin-8"/>
@@ -221,12 +213,13 @@
   }
   .vote-avatar-preview{
     display: inline-block;
+    float: left;
     width: 36px;
     height: 36px;
     border: 1px double #999;
     margin: 0 4px;
-    vertical-align: middle;
     border-radius: 50%;
+    overflow: hidden;
   }
   .avatar-preview-wrapper {
     position: relative;
@@ -235,6 +228,7 @@
     img {
       width: 100%;
       height: 100%;
+      vertical-align: top;
     }
   }
 </style>
@@ -242,22 +236,18 @@
 <script>
 //  import { fetchMenuList, createMenuItem, editMenuItem, deleteMenuItem } from '@/api/system_menu'
   import * as SpicyLeader from '@/api/spicyleader'
-  import { success, error, info } from '@/utils/dialog'
-  import { EXCEPTION_STATUS_DESC_MAP } from '@/common/constants'
   import { getQiNiuToken } from '@/api/qiniu'
+  import { success, error, info } from '@/utils/dialog'
+  import { EXCEPTION_STATUS_DESC_MAP, QINIU_IMAGE_REQUEST_BASEURL, QINIU_UPLOAD_URL } from '@/common/constants'
   import { Helper } from '@/common/helper'
   import { Utopa } from '@/common/utopa'
   import TableTree from '@/components/table/TableTree'
+  import MultiUpload from '@/components/Upload/multiUpload'
   import { dateFormat } from '@/filters'
   import Vote from './vote'
 
   export default {
     name: 'spicylist',
-    computed: {
-      voteImageUrl () {
-        return this.voteImageValue
-      }
-    },
     data () {
       return {
         listLoading: true,
@@ -333,9 +323,8 @@
         voteRules: {
           title: [{required: true}]
         },
-        voteAction: 'http://upload-z2.qiniu.com',
+        voteAction: QINIU_UPLOAD_URL,
         voteData: { token: '' },
-        voteImageValue: '',
 
         // preview dialog
         previewDialogVisible: false,
@@ -344,7 +333,8 @@
     },
     components: {
       TableTree,
-      Vote
+      Vote,
+      MultiUpload
     },
     filters: {
       statusStyleFilter (status) {
@@ -600,13 +590,9 @@
           error('服务出错')
         })
       },
-      emitInput (val) {
-        this.$emit('input', val)
-      },
-      handleVoteAvatarScucess (response) {
-        // TODO
-        const qiniuServer = 'http://ox2m2b48s.bkt.clouddn.com/'
-        this.emitInput(qiniuServer + response.key)
+      handleVoteAvatarScucess (response, file, fileList, vote) {
+        const qiniuServer = QINIU_IMAGE_REQUEST_BASEURL
+        vote.image = qiniuServer + response.key
       },
       beforeVoteAvatarUpload () {
         // TODO
@@ -624,7 +610,7 @@
       },
       // add a new vote item option
       addVoteItem () {
-        if (!(this.voteModel && this.voteModel.list)) {
+        if (!(this.voteModel && this.voteModel.voteItemList)) {
           console.log('voteModel is empty!')
           return false
         }
@@ -632,7 +618,7 @@
           info('最多添加五项')
           return
         }
-        this.voteModel.list.push({
+        this.voteModel.voteItemList.push({
           title: '',
           image: '',
           sort: 0
@@ -640,17 +626,26 @@
       },
       // remove vote item option
       removeVoteItem (vote) {
-        const index = this.voteModel.list.indexOf(vote)
-        index !== -1 && this.voteModel.list.splice(index, 1)
+        const index = this.voteModel.voteItemList.indexOf(vote)
+        index !== -1 && this.voteModel.voteItemList.splice(index, 1)
       },
       // create vote item
       createVote () {
         const _this = this
         _this.$refs.voteForm.validate(valid => {
           if (valid) {
+            _this.voteModel.overdue = Helper.parseTime(_this.voteModel.overdue)
             SpicyLeader.createVote(_this.voteModel).then(response => {
-              Utopa.isValidRequest(response) && _this.getList()
+              if (Utopa.isValidRequest(response)) {
+                success('创建成功')
+                _this.getList()
+              } else {
+                error(EXCEPTION_STATUS_DESC_MAP[response.data.code] || '创建失败')
+              }
               _this.dialogFormVisible = false
+            }).catch(err => {
+              console.log(err)
+              error('服务出错')
             })
           }
         })
@@ -660,9 +655,18 @@
         const _this = this
         _this.$refs.voteForm.validate(valid => {
           if (valid) {
+            _this.voteModel.overdue = Helper.parseTime(_this.voteModel.overdue)
             SpicyLeader.updateVote(_this.voteModel).then(response => {
-              Utopa.isValidRequest(response) && _this.getList()
+              if (Utopa.isValidRequest(response)) {
+                success('更新成功')
+                _this.getList()
+              } else {
+                error(EXCEPTION_STATUS_DESC_MAP[response.data.code] || '更新失败')
+              }
               _this.dialogFormVisible = false
+            }).catch(err => {
+              console.log(err)
+              error('服务出错')
             })
           }
         })

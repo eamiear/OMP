@@ -194,12 +194,12 @@ export const constantRouterMap = [
   {
     path: '/system',
     component: Layout,
-    redirect: '/menuorg',
+    redirect: '/system/menu',
     name: '系统平台',
     children: [
-      { name: '菜单管理', path: 'menuorg', component: require('@/views/system/menuorg/index') },
-      { name: '用户管理', path: 'userorg', component: require('@/views/system/menuorg/index') },
-      { name: '评论管理', path: 'comments', component: require('@/views/system/menuorg/index') }
+      { name: '菜单管理', path: 'menu', component: require('@/views/system/menu/index') },
+      { name: '用户管理', path: 'user', component: require('@/views/system/user/index') },
+      { name: '评论管理', path: 'comments', component: require('@/views/system/menu/index') }
     ]
   }
 ]

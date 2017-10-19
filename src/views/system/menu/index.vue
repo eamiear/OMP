@@ -59,7 +59,7 @@
 </style>
 
 <script>
-  import { fetchMenuList, createMenuItem, editMenuItem, deleteMenuItem } from '@/api/system_menu'
+  import { fetchMenuList, createMenuItem, editMenuItem, deleteMenuItem } from '@/api/system/menu'
   import TableTree from '@/components/table/TableTree.vue'
 
   export default {
