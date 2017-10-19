@@ -243,6 +243,7 @@
     methods: {
       fixLayout () {
         const body = document.body
+        //  TODO
         const mainHeader = document.querySelector('.main-header')
         const crumbNav = document.querySelector('.breadcrumb-nav')
         const filterContainer = document.querySelector('.filter-container')
