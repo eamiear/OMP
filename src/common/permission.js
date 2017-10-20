@@ -19,7 +19,7 @@ function hasPermission (roles, permissionRoles) {
 }
 
 // register global progress.
-const whiteList = ['/login', '/authredirect', '/system/menuorg', '/merchant/spicyleader']// 不重定向白名单
+const whiteList = ['/login', '/authredirect', '/system/menuorg', '/merchants/spicyleader']// 不重定向白名单
 
 router.beforeEach((to, from, next) => {
   NProgress.start() // 开启Progress

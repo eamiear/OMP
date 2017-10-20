@@ -23,12 +23,12 @@ export function fetchUserInfo (uid) {
 
 /**
  * 根据平台类型获取用户列表
- * @param sysId
+ * @param query
  */
-export function fetchUserList (sysId = CLIENT_TYPES.OPERATION_PLATFORM) {
+export function fetchUserList (query = {}) {
   return request.post({
     reqMethod: 'account.operation.user.getUserList',
-    params: {sysId}
+    params: query
   })
 }
 

@@ -32,18 +32,19 @@ export const constantRouterMap = [
   {
     path: '/basic',
     component: Layout,
-    redirect: '/areaCode',
+    // redirect: '/areaCode',
     name: '基础平台',
     children: [
-      { name: '地区代码', path: 'areaCode', component: require('@/views/basicPlatform/areaCode') },
+      { name: '地区代码', path: 'areaCode', component: require('@/views/basic/areaCode') },
       { name: '用户管理', path: 'dashboard', component: require('@/views/dashboard/index') },
       {
         name: '商场管理',
-        path: 'dashboard',
-        component: require('@/views/dashboard/index'),
+        path: '/basic/merchants',
+        redirect: '/basic/merchants/catalog',
+        component: require('@/views/basic/merchants/index'),
         children: [
-          { name: '商场类目管理', path: 'dashboard', component: require('@/views/dashboard/index') },
-          { name: '商场管理', path: 'dashboard', component: require('@/views/dashboard/index') }
+          { name: '商场类目管理', path: 'catalog', component: require('@/views/basic/merchants/catalog') },
+          { name: '商场管理', path: 'market', component: require('@/views/basic/merchants/market') }
         ]
       },
       {
@@ -116,13 +117,31 @@ export const constantRouterMap = [
     ]
   },
   {
-    path: '/',
+    path: '/vendors',
     component: Layout,
-    redirect: '/dashboard',
     name: '商家平台',
     children: [
       { name: '商家功能管理', path: 'dashboard', component: require('@/views/dashboard/index') },
-      { name: '商家管理', path: 'dashboard', component: require('@/views/dashboard/index') },
+      {
+        name: '商家管理',
+        path: '/vendors/merchants',
+        redirect: '/vendors/merchants/list',
+        component: require('@/views/vendors/merchants/index'),
+        children: [
+          { name: '商家信息管理', path: 'list', component: require('@/views/vendors/merchants/list') },
+          {
+            name: '商家店铺管理',
+            path: '/vendors/merchants/stores',
+            redirect: '/vendors/merchants/stores/list',
+            component: require('@/views/vendors/merchants/stores/index'),
+            children: [
+              {name: '店铺信息管理', path: 'list', component: require('@/views/vendors/merchants/stores/list')},
+              {name: '商家账号管理', path: 'accounts', component: require('@/views/vendors/merchants/stores/accounts')},
+              {name: '商家功能管理', path: 'funcs', component: require('@/views/vendors/merchants/stores/funcs')}
+            ]
+          }
+        ]
+      },
       { name: '团购管理', path: 'dashboard', component: require('@/views/dashboard/index') },
       { name: '商家订单管理', path: 'dashboard', component: require('@/views/dashboard/index') },
       { name: '消息发布管理', path: 'dashboard', component: require('@/views/dashboard/index') }
@@ -175,8 +194,7 @@ export const constantRouterMap = [
   {
     path: '/merchant',
     component: Layout,
-    // redirect: '/spicyleader',
-    name: '商圈服务商家APP',
+    name: '商圈平台',
     children: [
       {
         name: '麻辣教主',

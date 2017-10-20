@@ -145,7 +145,7 @@
             SpicyLeader.createSpicyLeader(_this.spicyForm).then((response) => {
               const result = response.data
               if (response.status === 200 && result.code === 0) {
-                _this.$router.push({path: '/merchant/spicyleader'})
+                _this.$router.push({path: '/merchants/spicyleader'})
               } else {
                 _this.$message({
                   type: 'error',

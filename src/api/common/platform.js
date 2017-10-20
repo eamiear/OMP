@@ -13,6 +13,6 @@ import request from '@/common/ajax'
 // 获取平台类型
 export function fetchClientTypes () {
   return request.post({
-    reqMethod: 'account.operation.user.disableUser'
+    reqMethod: 'account.system.getSystems'
   })
 }

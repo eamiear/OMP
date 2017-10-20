@@ -14,14 +14,15 @@
           </el-date-picker>
         </el-form-item>
 
-        <el-form-item label="注册来源">
-          <el-select clearable class="filter-item" placeholder="选择平台类型" v-model="listQuery.regOrigin" @visible-change="fetchClientTypeList">
-            <el-option v-for="item in clientTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
+        <el-form-item label="客户端类型">
+          <el-select clearable class="filter-item" placeholder="选择客户端类型" v-model="listQuery.sysId" @visible-change="fetchClientTypeList">
+            <el-option v-for="item in clientTypes" :key="item.sysCode" :label="item.sysName" :value="item.sysCode"></el-option>
           </el-select>
         </el-form-item>
 
         <el-form-item label="状态">
           <el-select clearable class="filter-item" v-model="listQuery.state">
+            <el-option label="全部" value=""></el-option>
             <el-option v-for="(value, key) in userState" :key="key" :label="value" :value="key"></el-option>
           </el-select>
         </el-form-item>
@@ -59,7 +60,7 @@
 
       <el-table-column align="center" label="性别">
         <template scope="scope">
-          <span>{{scope.row.sex}}</span>
+          <span>{{scope.row.sex | sexFormat}}</span>
         </template>
       </el-table-column>
 
@@ -119,9 +120,9 @@
     <div v-show="!listLoading" class="pagination-container">
       <el-pagination @size-change="handleSizeChange"
                      @current-change="handleCurrentChange"
-                     :current-page.sync="listQuery.page"
+                     :current-page.sync="listQuery.pageNo"
                      :page-sizes="[10,20,30, 50]"
-                     :page-size="listQuery.limit"
+                     :page-size="listQuery.pageSize"
                      layout="total, sizes, prev, pager, next, jumper"
                      :total="total"></el-pagination>
     </div>
@@ -170,7 +171,7 @@
   import * as platService from '@/api/common/platform'
   import { success, error } from '@/utils/dialog'
   import { validateMobilephone } from '@/utils/validate'
-  import { EXCEPTION_STATUS_DESC_MAP, CLIENT_TYPES_MAP } from '@/common/constants'
+  import { EXCEPTION_STATUS_DESC_MAP, CLIENT_TYPES_MAP, PAGINATION_PAGENO, PAGINATION_PAGESIZE, PAGINATION_PAGETOTAL } from '@/common/constants'
   import { Helper } from '@/common/helper'
   import { Utopa } from '@/common/utopa'
 
@@ -195,18 +196,20 @@
       }
       return {
         listLoading: true,
-        total: 1000,
-        listQuery: {
-          mobile: '',
+        total: PAGINATION_PAGETOTAL, // 列表总记录数
+        listQuery: {                // 查询条件
+          mobile: '',               // 手机号
+          beginTime: '',            // 注册范围开始时间
+          endTime: '',              // 注册范围结束时间
           registerTime: '',
-          regOrigin: '',
-          state: '',
-          page: 1,
-          limit: 10
+          sysId: undefined,         // 客户端类型ID
+          state: undefined,         // 用户状态
+          pageNo: PAGINATION_PAGENO,                // 页码
+          pageSize: PAGINATION_PAGESIZE              // 页数
         },
-        dialogFormVisible: false,
+        dialogFormVisible: false,   // 添加用户弹窗状态
         tableKey: 0,
-        utopaTableHeight: 0,
+        utopaTableHeight: 0,        // 表格高度
         list: [],             // 表格数据信息
         userModel: {          // 用户模型
           password: '',
@@ -232,21 +235,27 @@
         return type && CLIENT_TYPES_MAP[type]
       },
       interestListFormat (interest) {
-        // TODO
-        console.log('interest ', interest)
         return interest && interest.map((item, index) => {
           return item.description
         }).join(',')
+      },
+      sexFormat (sex) {
+        return sex && {1: '男', 2: '女'}[sex]
       }
     },
     created () {
       this.getList()
     },
+    watch: {
+      'listQuery.registerTime' (val) {
+        this.listQuery.beginTime = Helper.parseTime(this.listQuery.registerTime[0])
+        this.listQuery.endTime = Helper.parseTime(this.listQuery.registerTime[1])
+      }
+    },
     mounted () {
       this.fixLayout()
       window.onresize = () => {
         return (() => {
-          console.log(this.fixLayout)
           this.fixLayout()
         })()
       }
@@ -254,22 +263,22 @@
     methods: {
       fixLayout () {
         const body = document.body
-        //  TODO
         const mainHeader = document.querySelector('.main-header')
         const crumbNav = document.querySelector('.breadcrumb-nav')
         const filterContainer = document.querySelector('.filter-container')
         let pagination = document.querySelector('.pagination-container')
-        this.utopaTableHeight = body.clientHeight - mainHeader.clientHeight * 2 - crumbNav.clientHeight - filterContainer.clientHeight * 2 - pagination.clientHeight
+        this.utopaTableHeight = body.clientHeight - mainHeader.clientHeight * 2 - crumbNav.clientHeight - filterContainer.clientHeight * 2 - pagination.clientHeight - 10
       },
       // 获取列表
       getList () {
         this.listLoading = true
-        userService.fetchUserList().then(response => {
+        userService.fetchUserList(this.listQuery).then(response => {
           const result = response.data
           if (Utopa.isValidRequest(response)) {
             this.list = result.data.userList
+            this.total = result.data.total || PAGINATION_PAGETOTAL
           } else {
-            error(EXCEPTION_STATUS_DESC_MAP[result.code] || '登录失败')
+            error(EXCEPTION_STATUS_DESC_MAP[result.code] || '获取失败')
           }
           this.listLoading = false
         }).catch(err => {
@@ -277,19 +286,22 @@
           this.listLoading = false
         })
       },
-      // TODO 获取来源列表
+      // 获取来源列表
       fetchClientTypeList () {
         if (!this.clientTypes.length) {
           platService.fetchClientTypes().then((response) => {
             const result = response.data
             if (Utopa.isValidRequest(response)) {
-              this.clientTypes = result.data.infos || []
+              this.clientTypes = result.data.sysList || []
+            } else {
+              error(EXCEPTION_STATUS_DESC_MAP[result.code] || '获取客户端类型列表失败')
             }
           })
         }
       },
-      // TODO 查询
+      // 条件查询
       handleFilter () {
+        this.listQuery.pageNo = PAGINATION_PAGENO
         this.getList()
       },
       // 新增用户
@@ -297,13 +309,13 @@
         this.resetUserModel()
         this.dialogFormVisible = true
       },
-      // 重置密码
+      // TODO 重置密码
       handleResetPassword () {
-        // TODO reset password
+        success('接口待提供')
       },
-      // 导入
+      // TODO import user infos
       handleImport () {
-        // TODO import user infos
+        success('接口待提供')
       },
       // refresh user lilst
       handleRefresh () {
@@ -316,7 +328,6 @@
           'disable': userService.disableUser,
           'enable': userService.enableUser
         }
-        console.log(row)
         actionMap[action].call(null, row.uid).then(response => {
           if (Utopa.isValidRequest(response)) {
             this.getList()
@@ -326,13 +337,15 @@
           }
         })
       },
-      handleCurrentChange (pageIndex) {
-        // TODO pagination change current page
-        console.log('click page: ' + pageIndex)
+      // pagination change current page
+      handleCurrentChange (pageNo) {
+        this.listQuery.pageNo = pageNo
+        this.getList()
       },
-      handleSizeChange (pageIndex) {
-        // TODO pagination change page size
-        console.log('click page size: ' + pageIndex)
+      // pagination change page size
+      handleSizeChange (pageSize) {
+        this.listQuery.pageSize = pageSize
+        this.getList()
       },
       // 重置弹窗表单
       resetUserModel () {
@@ -347,10 +360,10 @@
         this.listQuery = {
           mobile: '',
           registerTime: '',
-          regOrigin: '',
-          state: '',
-          page: 1,
-          limit: 10
+          sysId: undefined,
+          state: undefined,
+          pageNo: PAGINATION_PAGENO,
+          pageSize: PAGINATION_PAGESIZE
         }
       },
       // 新增业务操作

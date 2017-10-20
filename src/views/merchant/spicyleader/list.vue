@@ -4,7 +4,7 @@
     <div class="filter-container">
       <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" placeholder="期数/主题/标题" v-model="listQuery.name"></el-input>
       <el-button class="filter-item" type="primary" icon="search" @click="handleFilter">搜索</el-button>
-      <router-link :to="{path: '/merchant/spicyleader/create'}">
+      <router-link :to="{path: '/merchants/spicyleader/create'}">
         <el-button class="filter-item" type="primary" icon="fa-plus" @click="handleFilter">
           新增
         </el-button>

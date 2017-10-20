@@ -123,7 +123,7 @@
 <script>
   import * as userService from '@/api/system/user'
   import { success, error } from '@/utils/dialog'
-  import { EXCEPTION_STATUS_DESC_MAP, CLIENT_TYPES_MAP } from '@/common/constants'
+  import { EXCEPTION_STATUS_DESC_MAP, CLIENT_TYPES_MAP, PAGINATION_PAGENO, PAGINATION_PAGESIZE, PAGINATION_PAGETOTAL } from '@/common/constants'
   import { Helper } from '@/common/helper'
   import { Utopa } from '@/common/utopa'
 
@@ -139,11 +139,11 @@
       }
       return {
         listLoading: true,
-        total: 1000,
+        total: PAGINATION_PAGETOTAL,
         listQuery: {
           title: '',
-          page: 1,
-          limit: 10
+          pageNo: PAGINATION_PAGENO,
+          pageSize: PAGINATION_PAGESIZE
         },
         dialogFormVisible: false,
         tableKey: 0,
@@ -156,12 +156,7 @@
         },
         replyModelRules: {   // 检验规则
           content: [{ required: true, message: '不能为空', validator: validateModel }]
-        },
-        userState: { // 用户状态
-          1: '启用',
-          2: '禁用'
-        },
-        clientTypes: []         // 平台类型
+        }
       }
     },
     filters: {
@@ -179,7 +174,6 @@
       this.fixLayout()
       window.onresize = () => {
         return (() => {
-          console.log(this.fixLayout)
           this.fixLayout()
         })()
       }
@@ -187,7 +181,6 @@
     methods: {
       fixLayout () {
         const body = document.body
-        //  TODO
         const mainHeader = document.querySelector('.main-header')
         const crumbNav = document.querySelector('.breadcrumb-nav')
         const filterContainer = document.querySelector('.filter-container')
