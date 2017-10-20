@@ -231,6 +231,8 @@ export default new VueRouter({
   // base: '/',
   // linkActiveClass: 'router-link-active',
   // scrollBehavior: fn
+  // base: '/omp',
+  // mode: 'history',
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRouterMap
 })

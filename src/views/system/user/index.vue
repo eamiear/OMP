@@ -16,6 +16,7 @@
 
         <el-form-item label="客户端类型">
           <el-select clearable class="filter-item" placeholder="选择客户端类型" v-model="listQuery.sysId" @visible-change="fetchClientTypeList">
+            <el-option label="全部" value=""></el-option>
             <el-option v-for="item in clientTypes" :key="item.sysCode" :label="item.sysName" :value="item.sysCode"></el-option>
           </el-select>
         </el-form-item>
@@ -108,7 +109,6 @@
 
       <el-table-column align="center" label="操作" min-width="150px">
         <template scope="scope">
-          <!--<el-button type="success" size="small" @click="handleUserAvailable(scope.row)">启用</el-button>-->
           <el-button v-if="scope.row.state===1" size="small" @click="handleUserAvailable(scope.row, 'disable')">禁用</el-button>
           <el-button v-else="scope.row.state===2" size="small" @click="handleUserAvailable(scope.row, 'enable')">启用</el-button>
           <el-button type="danger" size="small" @click="handleResetPassword(scope.row)">重置密码</el-button>
@@ -248,8 +248,10 @@
     },
     watch: {
       'listQuery.registerTime' (val) {
-        this.listQuery.beginTime = Helper.parseTime(this.listQuery.registerTime[0])
-        this.listQuery.endTime = Helper.parseTime(this.listQuery.registerTime[1])
+        const beginTime = this.listQuery.registerTime[0]
+        const endTime = this.listQuery.registerTime[1]
+        this.listQuery.beginTime = beginTime && Helper.parseTime(beginTime)
+        this.listQuery.endTime = endTime && Helper.parseTime(endTime)
       }
     },
     mounted () {
@@ -267,7 +269,7 @@
         const crumbNav = document.querySelector('.breadcrumb-nav')
         const filterContainer = document.querySelector('.filter-container')
         let pagination = document.querySelector('.pagination-container')
-        this.utopaTableHeight = body.clientHeight - mainHeader.clientHeight * 2 - crumbNav.clientHeight - filterContainer.clientHeight * 2 - pagination.clientHeight - 10
+        this.utopaTableHeight = body.clientHeight - mainHeader.clientHeight * 2 - crumbNav.clientHeight - filterContainer.clientHeight * 2 - pagination.clientHeight - 50
       },
       // 获取列表
       getList () {
@@ -359,6 +361,8 @@
       resetListQuery () {
         this.listQuery = {
           mobile: '',
+          beginTime: '',
+          endTime: '',
           registerTime: '',
           sysId: undefined,
           state: undefined,
