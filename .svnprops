@@ -4,6 +4,7 @@ node_modules
 npm-debug.log
 .idea
 .git
+.svn
 .vscode/
 .typingsrc
 /.vs/config/applicationhost.config
