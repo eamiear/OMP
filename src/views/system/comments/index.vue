@@ -1,41 +1,11 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-form autoComplete="on" :model="listQuery" label-position="left" :inline="true">
-        <el-form-item label="手机号">
-          <el-input style="width: 200px;" class="filter-item" placeholder="手机号" v-model="listQuery.mobile"></el-input>
-        </el-form-item>
-
-        <el-form-item label="注册时间">
-          <el-date-picker
-            v-model="listQuery.registerTime"
-            type="datetimerange"
-            placeholder="选择注册时间范围">
-          </el-date-picker>
-        </el-form-item>
-
-        <el-form-item label="注册来源">
-          <el-select clearable class="filter-item" placeholder="选择平台类型" v-model="listQuery.regOrigin" @visible-change="fetchClientTypeList">
-            <el-option v-for="item in clientTypes" :key="item.id" :label="item.name" :value="item.id"></el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="状态">
-          <el-select clearable class="filter-item" v-model="listQuery.state">
-            <el-option v-for="(value, key) in userState" :key="key" :label="value" :value="key"></el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-button class="filter-item" type="primary" icon="search" @click="handleFilter">查询</el-button>
-      </el-form>
-    </div>
-    <div class="filter-container text-right">
-      <el-button class="filter-item" type="primary" icon="fa-plus" @click="handleCreate">新增</el-button>
-      <el-button class="filter-item" type="primary" icon="fa-plus" @click="handleImport">批量导入</el-button>
-      <el-button class="filter-item" type="primary" icon="fa-refresh" @click="handleRefresh">刷新</el-button>
+      <el-input style="width: 200px;" class="filter-item" placeholder="评论内容" v-model="listQuery.title"></el-input>
+      <el-button class="filter-item" type="primary" icon="search" @click="handleFilter">查询</el-button>
     </div>
     <el-table
-      id="userlist"
+      id="comments"
       class="utable-container"
       :key='tableKey'
       :data="list"
@@ -45,72 +15,54 @@
       :height="utopaTableHeight"
       style="width: 100%">
 
+      <el-table-column align="center" label="编号">
+        <template scope="scope">
+          <span>{{scope.row.id}}</span>
+        </template>
+      </el-table-column>
+
       <el-table-column align="center" label="用户名">
         <template scope="scope">
           <span>{{scope.row.userName}}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="手机号">
+      <el-table-column align="center" label="类型">
         <template scope="scope">
-          <span>{{scope.row.mobile}}</span>
+          <span>{{scope.row.type}}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="性别">
+      <el-table-column align="center" label="评论对象">
         <template scope="scope">
-          <span>{{scope.row.sex}}</span>
+          <span>{{scope.row.title}}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="登录次数">
+      <el-table-column align="center" label="IP地址">
         <template scope="scope">
-          <span>{{scope.row.loginCount}}</span>
+          <span>{{scope.row.ip}}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="客户端类型">
+      <el-table-column align="center" label="评论时间">
         <template scope="scope">
-          <span>{{scope.row.regOrigin | clientTypeFormat}}</span>
+          <span>{{scope.row.commentsTime | dateTimeFormat}}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="注册时间">
+      <el-table-column align="center" label="状态">
         <template scope="scope">
-          <span>{{scope.row.createTime | dateTimeFormat}}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="兴趣爱好">
-        <template scope="scope">
-          <span>{{scope.row.interestList | interestListFormat}}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="我的关注">
-        <template scope="scope">
-          <span>{{scope.row.favorite}}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="最后登录IP">
-        <template scope="scope">
-          <span>{{scope.row.lastLoginIp}}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="最后登录时间">
-        <template scope="scope">
-          <span>{{scope.row.lastLoginTime | dateTimeFormat}}</span>
+          <span>{{scope.row.status | statusFormat}}</span>
         </template>
       </el-table-column>
 
       <el-table-column align="center" label="操作" min-width="150px">
         <template scope="scope">
-          <!--<el-button type="success" size="small" @click="handleUserAvailable(scope.row)">启用</el-button>-->
-          <el-button v-if="scope.row.state===1" size="small" @click="handleUserAvailable(scope.row, 'disable')">禁用</el-button>
-          <el-button v-else="scope.row.state===2" size="small" @click="handleUserAvailable(scope.row, 'enable')">启用</el-button>
-          <el-button type="danger" size="small" @click="handleResetPassword(scope.row)">重置密码</el-button>
+          <el-button v-if="scope.row.status===1" size="small" @click="handleAvailable(scope.row, 'hide')">隐藏</el-button>
+          <el-button v-else="scope.row.status===2" size="small" @click="handleAvailable(scope.row, 'show')">显示</el-button>
+          <el-button type="warn" size="small" @click="handleHotTopic(scope.row)">热评</el-button>
+          <el-button type="danger" size="small" @click="handleDelete(scope.row)">移除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -129,12 +81,15 @@
 
     <!-- create new user -->
     <el-dialog title="添加用户" size="tiny" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
-      <el-form class="small-space" autoComplete="on" :model="userModel" :rules="userModelRules" ref="userModelForm" label-position="left" label-width="70px" style='width: 60%; margin-left:50px;'>
-        <el-form-item label="手机号" prop="mobile">
-          <el-input v-model="userModel.mobile" autoComplete="on"></el-input>
+      <el-form class="small-space" autoComplete="on" :model="replyModel" :rules="replyModelRules" ref="replyModelForm" label-position="left" label-width="70px" style='width: 60%; margin-left:50px;'>
+        <el-form-item label="用户名" prop="userName">
+          <el-input v-model="replyModel.userName" autoComplete="on"></el-input>
         </el-form-item>
-        <el-form-item label="密  码" prop="password">
-          <el-input v-model="userModel.password"></el-input>
+        <el-form-item label="email" prop="email">
+          <el-input v-model="replyModel.email"></el-input>
+        </el-form-item>
+        <el-form-item label="回复内容" prop="content">
+          <el-input type="textarea" v-model="replyModel.content"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -167,9 +122,7 @@
 
 <script>
   import * as userService from '@/api/system/user'
-  import * as platService from '@/api/common/platform'
   import { success, error } from '@/utils/dialog'
-  import { validateMobilephone } from '@/utils/validate'
   import { EXCEPTION_STATUS_DESC_MAP, CLIENT_TYPES_MAP } from '@/common/constants'
   import { Helper } from '@/common/helper'
   import { Utopa } from '@/common/utopa'
@@ -177,18 +130,9 @@
   export default {
     name: 'userList',
     data () {
-      const validateUserModel = (rule, value, callback) => {
+      const validateModel = (rule, value, callback) => {
         if (!value) {
           callback(new Error(rule.field + '不能为空'))
-        } else {
-          callback()
-        }
-      }
-      const validateMobilePhone = (rule, value, callback) => {
-        if (!value) {
-          callback(new Error(''))
-        } else if (validateMobilephone(value)) {
-          callback(new Error('手机号不合法'))
         } else {
           callback()
         }
@@ -197,10 +141,7 @@
         listLoading: true,
         total: 1000,
         listQuery: {
-          mobile: '',
-          registerTime: '',
-          regOrigin: '',
-          state: '',
+          title: '',
           page: 1,
           limit: 10
         },
@@ -208,14 +149,13 @@
         tableKey: 0,
         utopaTableHeight: 0,
         list: [],             // 表格数据信息
-        userModel: {          // 用户模型
-          password: '',
-          mobile: '',
-          sysId: ''
+        replyModel: {          // 回复模型
+          userName: '',
+          email: '',
+          content: ''
         },
-        userModelRules: {   // 用户检验规则
-          mobile: [{ required: true, message: '手机号不能为空', validator: validateMobilePhone }],
-          password: [{ required: true, message: '密码不能为空', validator: validateUserModel }]
+        replyModelRules: {   // 检验规则
+          content: [{ required: true, message: '不能为空', validator: validateModel }]
         },
         userState: { // 用户状态
           1: '启用',
@@ -228,15 +168,8 @@
       dateTimeFormat (datetime) {
         return datetime && Helper.parseTime(datetime)
       },
-      clientTypeFormat (type) {
+      statusFormat (type) {
         return type && CLIENT_TYPES_MAP[type]
-      },
-      interestListFormat (interest) {
-        // TODO
-        console.log('interest ', interest)
-        return interest && interest.map((item, index) => {
-          return item.description
-        }).join(',')
       }
     },
     created () {
@@ -259,7 +192,7 @@
         const crumbNav = document.querySelector('.breadcrumb-nav')
         const filterContainer = document.querySelector('.filter-container')
         let pagination = document.querySelector('.pagination-container')
-        this.utopaTableHeight = body.clientHeight - mainHeader.clientHeight * 2 - crumbNav.clientHeight - filterContainer.clientHeight * 2 - pagination.clientHeight
+        this.utopaTableHeight = body.clientHeight - mainHeader.clientHeight * 2 - crumbNav.clientHeight - filterContainer.clientHeight - pagination.clientHeight - 70
       },
       // 获取列表
       getList () {
@@ -267,7 +200,7 @@
         userService.fetchUserList().then(response => {
           const result = response.data
           if (Utopa.isValidRequest(response)) {
-            this.list = result.data.userList
+//            this.list = result.data.userList
           } else {
             error(EXCEPTION_STATUS_DESC_MAP[result.code] || '登录失败')
           }
@@ -276,17 +209,6 @@
           error(EXCEPTION_STATUS_DESC_MAP[err.code] || '获取数据失败')
           this.listLoading = false
         })
-      },
-      // TODO 获取来源列表
-      fetchClientTypeList () {
-        if (!this.clientTypes.length) {
-          platService.fetchClientTypes().then((response) => {
-            const result = response.data
-            if (Utopa.isValidRequest(response)) {
-              this.clientTypes = result.data.infos || []
-            }
-          })
-        }
       },
       // TODO 查询
       handleFilter () {
@@ -297,24 +219,20 @@
         this.resetUserModel()
         this.dialogFormVisible = true
       },
-      // 重置密码
-      handleResetPassword () {
+      // 热评
+      handleHotTopic () {
         // TODO reset password
-      },
-      // 导入
-      handleImport () {
-        // TODO import user infos
       },
       // refresh user lilst
       handleRefresh () {
         this.resetListQuery()
         this.getList()
       },
-      // 启用/禁用用户
-      handleUserAvailable (row, action) {
+      // 显示/ 隐藏
+      handleAvailable (row, action) {
         const actionMap = {
-          'disable': userService.disableUser,
-          'enable': userService.enableUser
+          'show': userService.disableUser,
+          'hide': userService.enableUser
         }
         console.log(row)
         actionMap[action].call(null, row.uid).then(response => {
@@ -326,6 +244,10 @@
           }
         })
       },
+      // TODO 删除
+      handleDelete () {
+        // TODO delete
+      },
       handleCurrentChange (pageIndex) {
         // TODO pagination change current page
         console.log('click page: ' + pageIndex)
@@ -336,25 +258,23 @@
       },
       // 重置弹窗表单
       resetUserModel () {
-        this.userModel = {
-          password: '',
-          mobile: '',
-          sysId: ''
+        this.replyModel = {
+          userName: '',
+          email: '',
+          content: ''
         }
       },
       // 重置查询列表
       resetListQuery () {
         this.listQuery = {
-          mobile: '',
-          registerTime: '',
-          regOrigin: '',
-          state: '',
+          title: '',
           page: 1,
           limit: 10
         }
       },
-      // 新增业务操作
+      // 创建回复内容
       create () {
+        /*
         const _this = this
         _this.$refs.userModelForm.validate(valid => {
           if (valid) {
@@ -368,7 +288,7 @@
               _this.dialogFormVisible = false
             })
           }
-        })
+        })*/
       }
     }
   }

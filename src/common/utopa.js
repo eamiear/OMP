@@ -1,6 +1,6 @@
 /**
  * Created by skz on 2017/10/17 18:15
- * Method Of Utopoa
+ * Some Service Handle Method Of Utopa
  */
 export const Utopa = {
   isValidRequest (response) {

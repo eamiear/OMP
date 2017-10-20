@@ -5,12 +5,13 @@
 
 import request from '@/common/ajax'
 import { fetchUserInfo } from './system/user'
+import { CLIENT_TYPES, LOGIN_TYPES } from '@/common/constants'
 
-export function loginByUsername (username, password) {
+export function loginByUsername (username, password, loginType = LOGIN_TYPES.ACCOUNT_PASS, sysId = CLIENT_TYPES.OPERATION_PLATFORM) {
   // TODO data
   const data = {
-    loginType: 2,
-    sysId: 5,
+    loginType,
+    sysId,
     account: username,
     password
   }

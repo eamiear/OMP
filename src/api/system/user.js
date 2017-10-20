@@ -8,7 +8,12 @@
 // ===================================
 
 import request from '@/common/ajax'
+import { CLIENT_TYPES } from '@/common/constants'
 
+/**
+ * 根据用户ID获取用户信息
+ * @param uid
+ */
 export function fetchUserInfo (uid) {
   return request.post({
     reqMethod: 'account.operation.user.getUserByUid',
@@ -16,13 +21,33 @@ export function fetchUserInfo (uid) {
   })
 }
 
-export function fetchUserList (sysId = 5) {
+/**
+ * 根据平台类型获取用户列表
+ * @param sysId
+ */
+export function fetchUserList (sysId = CLIENT_TYPES.OPERATION_PLATFORM) {
   return request.post({
     reqMethod: 'account.operation.user.getUserList',
     params: {sysId}
   })
 }
 
+/**
+ * 创建用户/平台注册
+ * @param params
+ */
+export function createUser (params) {
+  !params.sysId && (params.sysId = CLIENT_TYPES.OPERATION_PLATFORM)
+  return request.post({
+    reqMethod: 'account.operation.reg.doReg',
+    params: params
+  })
+}
+
+/**
+ * 启用用户账号
+ * @param uid
+ */
 export function enableUser (uid) {
   return request.post({
     reqMethod: 'account.operation.user.unDisableUser',
@@ -30,9 +55,14 @@ export function enableUser (uid) {
   })
 }
 
+/**
+ * 禁用用户账号
+ * @param uid
+ */
 export function disableUser (uid) {
   return request.post({
     reqMethod: 'account.operation.user.disableUser',
     params: {uid}
   })
 }
+

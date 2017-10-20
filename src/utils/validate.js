@@ -28,3 +28,14 @@ export function validatAlphabets (str) {
   return reg.test(str)
 }
 
+/* 电话号码 */
+export function validateTelephone (str) {
+  const reg = /^(([0+]\d{2,3}-)?(0\d{2,3})-)(\d{7,8})(-(\d{3,}))?$/
+  return reg.test(str)
+}
+
+/* 手机号码 */
+export function validateMobilephone (str) {
+  const reg = /^(?:13\d|15[89])-?\d{5}(\d{3}|\*{3})$/
+  return reg.test(str)
+}

@@ -46,18 +46,31 @@ export const SERVER_CRASH = 99990019              // 系统不舒服
 export const SERVICE_NOT_EXIST = 99990021         // 调用服务不存在
 export const SERVICE_TYPE_ERROR = 99990022        // 服务类型错误
 
+export const USER_EXIST = 10010010                 // 用户已存在
+export const UNREGISTER_OR_DISABLE_ACCOUNT = 10010009  // 尚未注册或已禁用
+
 export const EXCEPTION_STATUS_DESC_MAP = {
   '99990003': '创建业务异常新新实例失败',
   '99990019': '系统不舒服，请稍后再试',
   '99990021': '调用服务不存在',
   '99990022': '服务类型错误',
   '999500005': '用户未登录',
-  '220100004': '用户名或密码错误'
+  '220100004': '用户名或密码错误',
+  '10010010': '用户已存在',
+  '10010009': '尚未注册或已禁用'
 }
 
 // =======================================================================
 // ------------------------- Service Code About --------------------------
 // =======================================================================
+
+export const LOGIN_TYPES = {
+  ACCOUNT_PASS: 2
+}
+
+export const LOGIN_TYPES_MAP = {
+  2: '账号密码'
+}
 
 export const CLIENT_TYPES = {
   UTOPA: 1,

@@ -199,7 +199,7 @@ export const constantRouterMap = [
     children: [
       { name: '菜单管理', path: 'menu', component: require('@/views/system/menu/index') },
       { name: '用户管理', path: 'user', component: require('@/views/system/user/index') },
-      { name: '评论管理', path: 'comments', component: require('@/views/system/menu/index') }
+      { name: '评论管理', path: 'comments', component: require('@/views/system/comments/index') }
     ]
   }
 ]
