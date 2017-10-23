@@ -17,7 +17,7 @@ export function loginByUsername (username, password, loginType = LOGIN_TYPES.ACC
   }
   return request.post({
     // url: '/login',
-    reqMethod: 'account.operator.login.doLogin',
+    reqMethod: 'account.login.doLogin',
     params: data
   })
 }

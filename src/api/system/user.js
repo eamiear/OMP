@@ -16,7 +16,7 @@ import { CLIENT_TYPES } from '@/common/constants'
  */
 export function fetchUserInfo (uid) {
   return request.post({
-    reqMethod: 'account.operation.user.getUserByUid',
+    reqMethod: 'account.userdata.getUserByUid',
     params: {uid}
   })
 }
@@ -27,7 +27,7 @@ export function fetchUserInfo (uid) {
  */
 export function fetchUserList (query = {}) {
   return request.post({
-    reqMethod: 'account.operation.user.getUserList',
+    reqMethod: 'account.userdata.getUserList',
     params: query
   })
 }
@@ -39,7 +39,7 @@ export function fetchUserList (query = {}) {
 export function createUser (params) {
   !params.sysId && (params.sysId = CLIENT_TYPES.OPERATION_PLATFORM)
   return request.post({
-    reqMethod: 'account.operation.reg.doReg',
+    reqMethod: 'account.reg.doReg',
     params: params
   })
 }
@@ -50,7 +50,7 @@ export function createUser (params) {
  */
 export function enableUser (uid) {
   return request.post({
-    reqMethod: 'account.operation.user.unDisableUser',
+    reqMethod: 'account.user.service.unDisableUser',
     params: {uid}
   })
 }
@@ -61,7 +61,7 @@ export function enableUser (uid) {
  */
 export function disableUser (uid) {
   return request.post({
-    reqMethod: 'account.operation.user.disableUser',
+    reqMethod: 'account.user.service.disableUser',
     params: {uid}
   })
 }
