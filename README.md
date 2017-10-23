@@ -1,3 +1,3 @@
-# Vue-Admin
+# OMP
 ----
-vue admin dashboard
+Operation Management Platform
