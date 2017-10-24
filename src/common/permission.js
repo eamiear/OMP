@@ -9,7 +9,7 @@ import NProgress from 'nprogress' // Progress 进度条
 import 'nprogress/nprogress.css'// Progress 进度条样式
 import { Notification } from 'element-ui'
 import { getToken, getUID } from '@/common/auth' // 验权
-import { EXCEPTION_STATUS_DESC_MAP, SERVER_CRASH } from '@/common/constants'
+import { EXCEPTION_STATUS_DESC_MAP, SERVER_CRASH, NOT_LOGIN_USER } from '@/common/constants'
 
 // permission judge
 function hasPermission (roles, permissionRoles) {
@@ -37,9 +37,14 @@ router.beforeEach((to, from, next) => {
               message: EXCEPTION_STATUS_DESC_MAP[res.code] || '获取用户信息失败',
               type: 'error'
             })
-            if (EXCEPTION_STATUS_DESC_MAP[res.code] === SERVER_CRASH) {
+            if (res.code === SERVER_CRASH) {
               // TODO convert to 500
               // next({path: '/404'})
+              store.dispatch('FedLogOut').then(() => {
+                next({ path: '/login' })
+              })
+            }
+            if (res.code === NOT_LOGIN_USER) { // 用户未登录|用户登录失效|用户在其他PC登录
               store.dispatch('FedLogOut').then(() => {
                 next({ path: '/login' })
               })

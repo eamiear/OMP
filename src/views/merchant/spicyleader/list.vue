@@ -235,8 +235,8 @@
 
 <script>
 //  import { fetchMenuList, createMenuItem, editMenuItem, deleteMenuItem } from '@/api/system_menu'
-  import * as SpicyLeader from '@/api/spicyleader'
-  import { getQiNiuToken } from '@/api/qiniu'
+  import * as SpicyLeader from '@/api/merchants/spicyleader'
+  import { getQiNiuToken } from '@/api/common/qiniu'
   import { success, error, info } from '@/utils/dialog'
   import { EXCEPTION_STATUS_DESC_MAP, QINIU_IMAGE_REQUEST_BASEURL, QINIU_UPLOAD_URL } from '@/common/constants'
   import { Helper } from '@/common/helper'

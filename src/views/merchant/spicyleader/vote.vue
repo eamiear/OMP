@@ -59,7 +59,7 @@
 </style>
 
 <script>
-  import * as SpicyLeader from '@/api/spicyleader'
+  import * as SpicyLeader from '@/api/merchants/spicyleader'
   import { success, error, info } from '@/utils/dialog'
   import { EXCEPTION_STATUS_DESC_MAP } from '@/common/constants'
   import { Utopa } from '@/common/utopa'

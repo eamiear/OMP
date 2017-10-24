@@ -63,7 +63,7 @@
 </style>
 
 <script>
-  import * as themeService from '@/api/theme'
+  import * as themeService from '@/api/merchants/theme'
   import { EXCEPTION_STATUS_DESC_MAP } from '@/common/constants'
   import { Helper } from '@/common/helper'
   import TableTree from '@/components/table/TableTree.vue'

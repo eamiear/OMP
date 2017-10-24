@@ -61,8 +61,8 @@
   import Tinymce from '@/components/Tinymce'
   import Upload from '@/components/Upload/singleImage3'
   import { EXCEPTION_STATUS_DESC_MAP } from '@/common/constants'
-  import * as SpicyLeader from '@/api/spicyleader'
-  import * as themeService from '@/api/theme'
+  import * as SpicyLeader from '@/api/merchants/spicyleader'
+  import * as themeService from '@/api/merchants/theme'
 
   export default {
     name: 'articleDetail',

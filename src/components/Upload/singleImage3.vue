@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { getQiNiuToken } from '@/api/qiniu'
+import { getQiNiuToken } from '@/api/common/qiniu'
 import { Helper } from '@/common/helper'
 
 export default {

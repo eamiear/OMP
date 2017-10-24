@@ -38,8 +38,36 @@
         </div>
       </div>
     </div>
+    <div class="chart-wrapper">
+      <div class="plate">
+        <h3 class="header">订单来源统计</h3>
+        <div class="content">
+          Calendar
+        </div>
+      </div>
+      <div class="plate">
+        <h3 class="header">订单排行统计</h3>
+        <div class="content">
+          Calendar
+        </div>
+      </div>
+      <div class="plate">
+        <h3 class="header">销售额统计</h3>
+        <div class="content">
+          Calendar
+        </div>
+      </div>
+    </div>
   </div>
 </template>
+
+<style lang="scss">
+  .chart-wrapper{
+    .plate{
+      margin: 10px 0;
+    }
+  }
+</style>
 
 <script>
 

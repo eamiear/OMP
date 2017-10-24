@@ -31,14 +31,14 @@ export const REQUEST_SUCCESS = 0                  // 请求成功
 export const REQUEST_FAIL = 1                     // 请求失败
 
 // APP
-export const SESSION_EXPIRE = 999500001           // 会话过期
-export const SESSION_RENEW = 999500002            // 会话续约
-export const INVALID_SESSION = 999500003          // 无效会话
-export const INVALID_SIGN = 999500004             // 签名失败
+export const SESSION_EXPIRE = 99950001           // 会话过期
+export const SESSION_RENEW = 99950002            // 会话续约
+export const INVALID_SESSION = 99950003          // 无效会话
+export const INVALID_SIGN = 99950004             // 签名失败
 
-export const NOT_LOGIN_USER = 999500005           // 未登录用户
-export const TOKEN_EXPIRE = 999500006             // 令牌过期
-export const TOKEN_RENEW = 999500007              // 令牌续约
+export const NOT_LOGIN_USER = 99950005           // 未登录用户
+export const TOKEN_EXPIRE = 99950006             // 令牌过期
+export const TOKEN_RENEW = 99950007              // 令牌续约
 
 // Common Exception Code
 export const CREATE_SERVICE_FAIL = 99990003       // 创建业务异常新新实例失败
@@ -55,8 +55,8 @@ export const EXCEPTION_STATUS_DESC_MAP = {
   '99990019': '系统不舒服，请稍后再试',
   '99990021': '调用服务不存在',
   '99990022': '服务类型错误',
-  '999500005': '用户未登录',
-  '220100004': '用户名或密码错误',
+  '99950005': '用户未登录',
+  '22010004': '用户名或密码错误',
   '10010010': '用户已存在',
   '10010009': '尚未注册或已禁用',
   '10010014': '用户已被禁用'

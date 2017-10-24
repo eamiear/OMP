@@ -35,6 +35,9 @@ export const Helper = {
   isObject: function (obj) {
     return obj !== null && typeof obj === 'object'
   },
+  isString: function (str) {
+    return typeof str === 'string'
+  },
   /**
    * Strict object type check. Only returns true
    * for plain JavaScript objects.
