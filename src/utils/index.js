@@ -9,6 +9,7 @@ export function transferToTreeArray (data, parent, level, isOpen) {
     if (parent) {
       Vue.set(node, 'parent', parent)
       Vue.set(node, 'pId', parent.id)
+      Vue.set(node, 'parentId', parent.id)
     }
     let _level = 0
     if (level !== undefined && level !== null) {

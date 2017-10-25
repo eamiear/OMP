@@ -11,7 +11,8 @@
       <el-table-column v-for="(column, index) in columns"
                        :key="column.dataIndex"
                        :label="column.text"
-                       align="center"
+                       :width="column.width"
+                       :align="column.align || 'center'"
                        header-align="center">
         <template scope="scope">
           <!-- add space -->
@@ -22,35 +23,20 @@
             <i v-if="scope.row.open" class="el-icon-arrow-down" aria-hidden="true"></i>
           </button>
           <span v-else-if="index===0" class="space"></span>
-          {{scope.row[column.dataIndex]}}
+
+          <div v-if="column.mode === 'switcher'">
+            <el-switch v-model="scope.row[column.dataIndex]" on-text="" off-text="" @change="emitChange"> </el-switch>
+          </div>
+          <span :class="column.style" v-else>{{scope.row[column.dataIndex]}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" v-if="treeType === 'normal'" width="260">
+      <el-table-column label="操作" align="center" header-align="center" v-if="treeType === 'normal'" width="230px">
         <template scope="scope">
-          <!--<button type="button" class="el-button el-button&#45;&#45;default el-button&#45;&#45;small" @click="handleCreate(scope.row)">
-            &lt;!&ndash;<router-link&ndash;&gt;
-              &lt;!&ndash;:to="{ path: requestUrl + 'edit', query: {id: scope.row.Oid} }"&ndash;&gt;
-              &lt;!&ndash;tag="span">&ndash;&gt;
-              &lt;!&ndash;编辑&ndash;&gt;
-            &lt;!&ndash;</router-link>&ndash;&gt;
-            新增
-          </button>-->
-          <!--<button type="button" class="el-button el-button&#45;&#45;success el-button&#45;&#45;small" >
-            &lt;!&ndash;<router-link&ndash;&gt;
-            &lt;!&ndash;:to="{ path: requestUrl + 'edit', query: {id: scope.row.Oid} }"&ndash;&gt;
-            &lt;!&ndash;tag="span">&ndash;&gt;
-            &lt;!&ndash;编辑&ndash;&gt;
-            &lt;!&ndash;</router-link>&ndash;&gt;
-            编辑
-          </button>-->
-          <!--<button type="button" class="el-button el-button&#45;&#45;success el-button&#45;&#45;small">-->
-          <!--<router-link :to="{ path: requestUrl, query: {pId: scope.row.parentOId} }" tag="span">-->
-          <!--添加下级树结构-->
-          <!--</router-link>-->
-          <!--</button>-->
-          <el-button type="default" size="small" @click="emitCreate(scope.row)">新增</el-button>
-          <el-button type="success" size="small" @click="emitUpdate(scope.row)">编辑</el-button>
-          <el-button type="danger" size="small"  @click="emitDelete(scope.row)">删除</el-button>
+          <slot>
+            <el-button type="default" size="small" @click="emitCreate(scope.row)">新增</el-button>
+            <el-button type="success" size="small" @click="emitUpdate(scope.row)">编辑</el-button>
+            <el-button type="danger" size="small"  @click="emitDelete(scope.row)">删除</el-button>
+          </slot>
         </template>
       </el-table-column>
     </el-table>
@@ -104,7 +90,9 @@
       }
     },
     data () {
-      return {}
+      return {
+        mode: ''
+      }
     },
     computed: {
       data: function () { // 格式化数据源
@@ -166,6 +154,9 @@
       },
       emitDelete (row) {
         this.$emit('delete', row)
+      },
+      emitChange (val) {
+        this.$emit('switchChange', val)
       }
     }
   }

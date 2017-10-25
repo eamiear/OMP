@@ -12,20 +12,19 @@
 import request from '@/common/ajax'
 
 /**
- * 获取区域代码
- * @param query
+ * 获取系统菜单列表
+ * @param uid
  */
-export function fetchMenuList (query) {
-  return request.get({
-    reqMethod: 'account.reg.sendRegCheckCode',
-    params: {
-      'mobile': '18825155586'
-    }
+export function fetchMenuList (uid) {
+  return request.post({
+    url: 'system/findMenu',
+    reqMethod: 'operation.menu.findMenuTree',
+    params: { uid }
   })
 }
 
 /**
- * TODO 查询区域代码
+ * TODO 查询系统菜单
  * @param query
  */
 export function searchMenuList (query) {
@@ -37,37 +36,34 @@ export function searchMenuList (query) {
 }
 
 /**
- * TODO 新增区域代码项
+ * TODO 新增系统菜单
  * @param params
  */
 export function createMenuItem (params) {
-  // return fetch({
-  //   url: '/system/menu',
-  //   method: 'post',
-  //   params: params || {}
-  // })
+  return request.post({
+    reqMethod: 'operation.menu.insertMenu',
+    params: params
+  })
 }
 
 /**
- * TODO 编辑区域代码项
+ * TODO 编辑系统菜单
  * @param params
  */
 export function editMenuItem (params) {
-  // return fetch({
-  //   url: '/system/menu',
-  //   method: 'put',
-  //   params: params
-  // })
+  return request.post({
+    reqMethod: 'operation.menu.updateMenu',
+    params: params
+  })
 }
 
 /**
- * TODO 删除区域代码项
+ * TODO 删除系统菜单
  * @param id
  */
 export function deleteMenuItem (id) {
-  // return fetch({
-  //   url: '/system/menu',
-  //   method: 'delete',
-  //   params: {id: id}
-  // })
+  return request.post({
+    reqMethod: 'operation.menu.deleteMenu',
+    params: {id}
+  })
 }

@@ -14,6 +14,7 @@
                 @create="handleCreate"
                 @update="handleUpdate"
                 @delete="handleDelete"
+                @switchChange="handleSwitch"
     ></table-tree>
 
     <el-dialog :title="dialogTitleMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="false" size="tiny">
@@ -60,7 +61,12 @@
 
 <script>
   import { fetchMenuList, createMenuItem, editMenuItem, deleteMenuItem } from '@/api/system/menu'
-  import TableTree from '@/components/table/TableTree.vue'
+  import { getUID } from '@/common/auth'
+  import { success, error } from '@/utils/dialog'
+  import TableTree from '@/components/table/TableTree'
+  import { EXCEPTION_STATUS_DESC_MAP } from '@/common/constants'
+//  import { Helper } from '@/common/helper'
+  import { Utopa } from '@/common/utopa'
 
   export default {
     name: 'areaCode',
@@ -86,33 +92,67 @@
           create: '新增'
         },
         columns: [
+
           {
             text: '菜单名称',
+            width: '230px',
+            align: 'left',
             dataIndex: 'name'
           },
           {
-            text: '地域编码',
-            dataIndex: 'code'
+            text: '层级',
+            width: '70px',
+            dataIndex: 'level'
           },
           {
-            text: '父编码',
-            dataIndex: 'pcode'
+            text: '菜单编码',
+            dataIndex: 'menuCode'
+          },
+          {
+            text: '组件路径',
+            width: '200px',
+            align: 'left',
+            style: 'link-type',
+            dataIndex: 'component'
+          },
+          {
+            text: '重定向路径',
+            width: '200px',
+            style: 'link-type',
+            align: 'left',
+            dataIndex: 'redirect'
+          },
+          {
+            text: '小图标',
+            dataIndex: 'icon'
+          },
+          {
+            text: '标签',
+            align: 'left',
+            dataIndex: 'labels'
+          },
+          {
+            text: '附加属性',
+            dataIndex: 'meta'
+          },
+          {
+            text: '父级名称',
+            dataIndex: 'parentName'
+          },
+          {
+            text: '权限编码',
+            dataIndex: 'permissionCOde'
           },
           {
             text: '排序',
-            dataIndex: 'order'
+            width: '70px',
+            dataIndex: 'sortOrder'
           },
           {
-            text: '创建时间',
-            dataIndex: 'createTime'
-          },
-          {
-            text: '更新时间',
-            dataIndex: 'updateTime'
-          },
-          {
-            text: '更新者',
-            dataIndex: 'operator'
+            text: '显示',
+            width: '70px',
+            mode: 'switcher',
+            dataIndex: 'isHidden'
           }
         ],
         dataSource: []
@@ -137,23 +177,21 @@
     methods: {
       // 获取列表
       getList () {
-        this.listLoading = true
-        console.log('fetchMenuList', fetchMenuList)
-        fetchMenuList().then(response => {
+        const _this = this
+        _this.listLoading = true
+        fetchMenuList(getUID()).then(response => {
           const result = response.data
-          console.log('dfd', response)
-          if (response.status === 200 && result.code === 0) {
-            this.dataSource = result.data
+          console.log('sysmenu', response)
+          if (Utopa.isValidRequest(response)) {
+//            _this.dataSource = result.data.menus
+            _this.dataSource = result.data
+          } else {
+            error(EXCEPTION_STATUS_DESC_MAP[result.code] || '获取失败')
           }
-          this.listLoading = false
+          _this.listLoading = false
         }).catch(err => {
-          console.log(err)
-          this.$notify({
-            title: '失败',
-            message: '获取数据失败',
-            type: 'error',
-            duration: 2000
-          })
+          error(EXCEPTION_STATUS_DESC_MAP[err.code] || '获取数据失败')
+          _this.listLoading = false
         })
       },
       // 查询
@@ -161,10 +199,7 @@
         this.getList()
       },
       handleModifyStatus (row, status) {
-        this.$message({
-          message: '操作成功',
-          type: 'success'
-        })
+        success('操作成功')
         row.status = status
       },
       // 根据节点ID删除节点
@@ -214,6 +249,9 @@
         this.dialogStatus = 'update'
         this.isReadOnly = true
         this.dialogFormVisible = true
+      },
+      handleSwitch (val) {
+//        alert(val)
       },
       // 点击删除按钮
       handleDelete (row) {
