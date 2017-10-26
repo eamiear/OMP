@@ -19,7 +19,7 @@ function hasPermission (roles, permissionRoles) {
 }
 
 // register global progress.
-const whiteList = ['/login', '/authredirect', '/system/menuorg', '/merchants/spicyleader', '/system/menu']// 不重定向白名单
+const whiteList = ['/login', '/authredirect', '/system/menuorg', '/merchant/spicyleader', '/system/menu']// 不重定向白名单
 
 router.beforeEach((to, from, next) => {
   NProgress.start() // 开启Progress
@@ -29,9 +29,6 @@ router.beforeEach((to, from, next) => {
     } else {
       if (store.getters.roles.length === 0) { // 判断当前用户是否已拉取完user_info信息
         store.dispatch('GetUserInfo').then(res => { // 拉取user_info
-          console.log('getUserInfo', res)
-          // const result = res.data
-          // const serviceData = result.data
           if (res.code !== 0) {
             Notification({
               message: EXCEPTION_STATUS_DESC_MAP[res.code] || '获取用户信息失败',
@@ -53,7 +50,6 @@ router.beforeEach((to, from, next) => {
             next({path: '/login'})
           } else {
             const roles = []
-            // TODO 获取菜单数据...
             store.dispatch('GenerateRoutes', { roles }).then(() => { // 生成可访问的路由表
               router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
               next({ ...to }) // hack方法 确保addRoutes已完成
@@ -68,7 +64,7 @@ router.beforeEach((to, from, next) => {
       } else {
         // 没有动态改变权限的需求可直接next() 删除下方权限判断 ↓
         if (hasPermission(store.getters.roles, to.meta.role)) {
-          next()//
+          next()
         } else {
           next({path: '/401', query: { noGoBack: true }})
         }

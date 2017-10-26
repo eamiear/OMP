@@ -16,42 +16,42 @@ import request from '@/common/ajax'
  */
 export function fetchSpicyLeaderList (query) {
   return request.post({
-    reqMethod: 'popularize.magazine.operate.getAllMagazine',
+    reqMethod: 'operation.popularize.magazine.operate.getAllMagazine',
     params: {}
   })
 }
 
 export function createSpicyLeader (params) {
   return request.post({
-    reqMethod: 'popularize.magazine.operate.saveMagazine',
+    reqMethod: 'operation.popularize.magazine.operate.saveMagazine',
     params: params
   })
 }
 
 export function editSpicyLeader (params) {
   return request.post({
-    reqMethod: 'popularize.magazine.operate.updateMagazine',
+    reqMethod: 'operation.popularize.magazine.operate.updateMagazine',
     params: params
   })
 }
 
 export function publishSpicyLeader (id, status) {
   return request.post({
-    reqMethod: 'popularize.magazine.operate.updateMagazine',
+    reqMethod: 'operation.popularize.magazine.operate.updateMagazine',
     params: {id, status}
   })
 }
 
-export function deleteSpicyLeader (id) {
+export function deleteSpicyLeader (id, status = -1) {
   return request.post({
-    reqMethod: 'popularize.magazine.operate.deleteMagazine',
-    params: {id}
+    reqMethod: 'operation.popularize.magazine.operate.deleteMagazine',
+    params: {id, status}
   })
 }
 
 export function fetchSpicyLeaderById (id) {
   return request.get({
-    reqMethod: 'popularize.magazine.operate.selectMagazine',
+    reqMethod: 'operation.popularize.magazine.operate.selectMagazine',
     params: {id}
   })
 }
@@ -61,42 +61,42 @@ export function fetchSpicyLeaderById (id) {
 
 export function createVote (params) {
   return request.post({
-    reqMethod: 'popularize.magazine.operate.saveMagazineVote',
+    reqMethod: 'operation.popularize.magazine.operate.saveMagazineVote',
     params: params
   })
 }
 
 export function updateVote (params) {
   return request.post({
-    reqMethod: 'popularize.magazine.operate.saveMagazineVote',
+    reqMethod: 'operation.popularize.magazine.operate.saveMagazineVote',
     params: params
   })
 }
 
 export function fetchVoteById (vid) {
   return request.post({
-    reqMethod: 'popularize.magazine.operate.selectMagazineVote',
+    reqMethod: 'operation.popularize.magazine.operate.selectMagazineVote',
     params: {id: vid}
   })
 }
 
 export function fetchVotesByMagazineId (magazineId) {
   return request.post({
-    reqMethod: 'popularize.magazine.operate.selectMagazineVoteByMagazineId',
+    reqMethod: 'operation.popularize.magazine.operate.getMagazineVote',
     params: {magazineId: magazineId}
   })
 }
 
-export function deleteVote (id) {
+export function deleteVote (id, status = -1) {
   return request.post({
-    reqMethod: 'popularize.magazine.operate.deleteMagazineVote',
-    params: {id}
+    reqMethod: 'operation.popularize.magazine.operate.deleteMagazineVote',
+    params: {id, status}
   })
 }
 
 export function enableVote (status) {
   return request.post({
-    reqMethod: 'popularize.magazine.operate.enableMagazineVote',
+    reqMethod: 'operation.popularize.magazine.operate.enableMagazineVote',
     params: {status}
   })
 }
@@ -106,35 +106,35 @@ export function enableVote (status) {
 
 export function fetchVoteItemList (voteId) {
   return request.get({
-    reqMethod: 'popularize.magazine.operate.getAllMagazineVoteOptions',
+    reqMethod: 'operation.popularize.magazine.operate.getAllMagazineVoteOptions',
     params: {voteId}
   })
 }
 
 export function createVoteItem (params) {
   return request.post({
-    reqMethod: 'popularize.magazine.operate.saveMagazineVoteOptions',
+    reqMethod: 'operation.popularize.magazine.operate.saveMagazineVoteOptions',
     params: params
   })
 }
 
 export function updateVoteItem (params) {
   return request.post({
-    reqMethod: 'popularize.magazine.operate.updateMagazineVoteOptions',
+    reqMethod: 'operation.popularize.magazine.operate.updateMagazineVoteOptions',
     params: params
   })
 }
 
 export function fetchVoteItemById (id) {
   return request.post({
-    reqMethod: 'popularize.magazine.operate.selectMagazineVoteOptions',
+    reqMethod: 'operation.popularize.magazine.operate.selectMagazineVoteOptions',
     params: {id}
   })
 }
 
 export function deleteVoteItem (id) {
   return request.post({
-    reqMethod: 'popularize.magazine.operate.deleteMagazineVoteOptions',
+    reqMethod: 'operation.popularize.magazine.operate.deleteMagazineVoteOptions',
     params: {id}
   })
 }

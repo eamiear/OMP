@@ -1,4 +1,8 @@
-import { asyncRouterMap, constantRouterMap } from '@/router'
+// import { asyncRouterMap, constantRouterMap } from '@/router'
+import { constantRouterMap } from '@/router'
+import { getUID } from '@/common/auth'
+import { fetchMenuList } from '@/api/system/menu'
+const _import = require('@/router/_import_' + process.env.NODE_ENV)
 /* eslint-disable no-unused-vars*/
 /**
  * 通过meta.role判断是否与当前用户权限匹配
@@ -35,6 +39,7 @@ function filterAsyncRouter (asyncRouterMap, roles) {
 const permission = {
   state: {
     routers: constantRouterMap,
+    asyncRouterMap: [],
     addRouters: [],
     authorityInfo: null
   },
@@ -42,6 +47,9 @@ const permission = {
     SET_ROUTERS: (state, routers) => {
       state.addRouters = routers
       state.routers = constantRouterMap.concat(routers)
+    },
+    SET_ASYNC_ROUTER_MAP: (state, asyncRouterMap) => {
+      state.asyncRouterMap = asyncRouterMap
     },
     SET_AUTHORITY_INFO: (state, authorityInfo) => {
       state.authorityInfo = authorityInfo
@@ -60,9 +68,24 @@ const permission = {
         // } else {
         //   accessedRouters = filterAsyncRouter(asyncRouterMap, roles)
         // }
-        accessedRouters = filterAsyncRouter(asyncRouterMap, roles)
-        commit('SET_ROUTERS', accessedRouters)
-        resolve()
+        const handleRouters = (routers) => {
+          Array.from(routers).forEach(function (router) {
+            router.component = _import(router.component.slice(router.component.indexOf('views') + 6))
+            if (router.children && router.children.length > 0) {
+              handleRouters(router.children)
+            }
+            return false
+          })
+          return routers
+        }
+        fetchMenuList(getUID()).then(response => {
+          const result = response.data
+          const routerMap = handleRouters(result.data.menus)
+          accessedRouters = filterAsyncRouter(routerMap, roles)
+          commit('SET_ASYNC_ROUTER_MAP', routerMap)
+          commit('SET_ROUTERS', accessedRouters)
+          resolve()
+        })
       })
     }
   }

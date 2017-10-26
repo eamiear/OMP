@@ -13,10 +13,11 @@
                        :label="column.text"
                        :width="column.width"
                        :align="column.align || 'center'"
+                       v-if="column.display !== 'hide'"
                        header-align="center">
         <template scope="scope">
           <!-- add space -->
-          <span v-if="spaceIconShow(index)" class="space" ref="space" :style="{width: 20*scope.row.level}"></span>
+          <span v-if="spaceIconShow(index)" class="space" ref="space" :style="{width: 12*scope.row.level + 'px'}"></span>
           <!-- toggle icon -->
           <button class="button icon-toggle" v-if="toggleIconShow(index,scope.row)" @click="toggle(scope.$index)">
             <i v-if="!scope.row.open" class="el-icon-arrow-right" aria-hidden="true"></i>
@@ -25,12 +26,15 @@
           <span v-else-if="index===0" class="space"></span>
 
           <div v-if="column.mode === 'switcher'">
-            <el-switch v-model="scope.row[column.dataIndex]" on-text="" off-text="" @change="emitChange"> </el-switch>
+            <el-switch v-model="scope.row[column.dataIndex]" :on-value="1" :off-value="0" on-text="" off-text="" @change="emitChange"> </el-switch>
+          </div>
+          <div v-else-if="column.mode === 'icon'">
+            <icon style="font-size: 16px;" :name="scope.row[column.dataIndex] ? scope.row[column.dataIndex] : ''"></icon>
           </div>
           <span :class="column.style" v-else>{{scope.row[column.dataIndex]}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" header-align="center" v-if="treeType === 'normal'" width="230px">
+      <el-table-column label="操作" align="center" header-align="center" v-if="treeType === 'normal'" width="200px">
         <template scope="scope">
           <slot>
             <el-button type="default" size="small" @click="emitCreate(scope.row)">新增</el-button>
@@ -156,6 +160,7 @@
         this.$emit('delete', row)
       },
       emitChange (val) {
+//        this.$emit('switchChange', {row: row, val: val})
         this.$emit('switchChange', val)
       }
     }

@@ -1,6 +1,6 @@
 import Vue from 'vue'
 
-export function transferToTreeArray (data, parent, level, isOpen) {
+export function transferToTreeArray (data, parent, isOpen) {
   let tmp = []
   Array.from(data).forEach(function (node) {
     if (!node.open) {
@@ -10,16 +10,18 @@ export function transferToTreeArray (data, parent, level, isOpen) {
       Vue.set(node, 'parent', parent)
       Vue.set(node, 'pId', parent.id)
       Vue.set(node, 'parentId', parent.id)
+      Vue.set(node, 'parentName', parent.name)
     }
-    let _level = 0
-    if (level !== undefined && level !== null) {
-      _level = level + 1
-    }
-    Vue.set(node, 'level', _level)
+    // let _level = 0
+    // if (level !== undefined && level !== null) {
+    //   _level = level + 1
+    // }
+    // Vue.set(node, 'level', _level)
     Vue.set(node, 'isParent', node.children && node.children.length > 0)
     tmp.push(node)
     if (node.children && node.children.length > 0) {
-      let children = transferToTreeArray(node.children, node, _level, isOpen)
+      // let children = transferToTreeArray(node.children, node, _level, isOpen)
+      let children = transferToTreeArray(node.children, node, isOpen)
       tmp = tmp.concat(children)
     }
   })

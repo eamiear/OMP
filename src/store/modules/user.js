@@ -53,7 +53,6 @@ const user = {
       const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
         loginByUsername(username, userInfo.password).then(response => {
-          console.log('login-response---', response)
           const result = response.data
           const serviceData = result.data
           if (response.status === 200 && result.code === 0) {

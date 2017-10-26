@@ -13,22 +13,24 @@ import Layout from '@/views/layout/Layout'
  * meta : { role: ['admin'] }  will control the page role
  * icon : the icon show in the sidebar using font-awesome
  * image: the image show in the sidebar using a picture for the icon, image has higher priority than icon
- * isHidden : if `hidden:true` will not show in the sidebar
+ * isShow : if `isShow:false` will not show in the sidebar
  * labels: [{classes: 'bg-red', text: '5'}] will show on the right side of the sidebar
  * isSingle : `isSingle:true` means the item has not submenu
  **/
 export const constantRouterMap = [
-  { path: '/login', component: require('@/views/login/index'), isHidden: true },
-  { path: '/404', component: require('@/views/errorPage/404'), isHidden: true },
-  { path: '/401', component: require('@/views/errorPage/401'), isHidden: true },
+  { path: '/login', component: require('@/views/login/index'), isShow: false },
+  { path: '/404', component: require('@/views/errorPage/404'), isShow: false },
+  { path: '/401', component: require('@/views/errorPage/401'), isShow: false },
   {
     path: '/',
     component: Layout,
     redirect: '/dashboard',
     name: '首页',
-    isHidden: true,
+    isShow: false,
     children: [{ path: 'dashboard', component: require('@/views/dashboard/index') }]
-  },
+  }
+  /*
+  ,
   {
     path: '/basic',
     component: Layout,
@@ -220,6 +222,7 @@ export const constantRouterMap = [
       { name: '评论管理', path: 'comments', component: require('@/views/system/comments/index') }
     ]
   }
+  */
 ]
 
 export const asyncRouterMap = [

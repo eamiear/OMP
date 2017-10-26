@@ -17,7 +17,7 @@ import request from '@/common/ajax'
  */
 export function fetchMenuList (uid) {
   return request.post({
-    url: 'system/findMenu',
+    // url: 'system/findMenu',
     reqMethod: 'operation.menu.findMenuTree',
     params: { uid }
   })
@@ -54,6 +54,13 @@ export function editMenuItem (params) {
   return request.post({
     reqMethod: 'operation.menu.updateMenu',
     params: params
+  })
+}
+
+export function showMenuItem (id, isShow) {
+  return request.post({
+    reqMethod: 'operation.menu.updateMenu',
+    params: {id, isShow}
   })
 }
 
