@@ -8,7 +8,6 @@
 // ----------- 菜单管理 ---------------
 // ===================================
 
-// import fetch from '@/common/fetch'
 import request from '@/common/ajax'
 
 /**
@@ -24,7 +23,7 @@ export function fetchMenuList (uid) {
 }
 
 /**
- * TODO 查询系统菜单
+ * 查询系统菜单
  * @param query
  */
 export function searchMenuList (query) {
@@ -36,7 +35,7 @@ export function searchMenuList (query) {
 }
 
 /**
- * TODO 新增系统菜单
+ * 新增系统菜单
  * @param params
  */
 export function createMenuItem (params) {
@@ -47,7 +46,7 @@ export function createMenuItem (params) {
 }
 
 /**
- * TODO 编辑系统菜单
+ * 编辑系统菜单
  * @param params
  */
 export function editMenuItem (params) {
@@ -57,6 +56,11 @@ export function editMenuItem (params) {
   })
 }
 
+/**
+ * 显示或隐藏菜单
+ * @param id
+ * @param isShow
+ */
 export function showMenuItem (id, isShow) {
   return request.post({
     reqMethod: 'operation.menu.updateMenu',
@@ -65,7 +69,7 @@ export function showMenuItem (id, isShow) {
 }
 
 /**
- * TODO 删除系统菜单
+ * 删除系统菜单
  * @param id
  */
 export function deleteMenuItem (id) {

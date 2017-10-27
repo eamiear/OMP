@@ -2,7 +2,7 @@
 import { constantRouterMap } from '@/router'
 import { getUID } from '@/common/auth'
 import { fetchMenuList } from '@/api/system/menu'
-const _import = require('@/router/_import_' + process.env.NODE_ENV)
+const _import = require('@/router/_import_production')
 /* eslint-disable no-unused-vars*/
 /**
  * 通过meta.role判断是否与当前用户权限匹配

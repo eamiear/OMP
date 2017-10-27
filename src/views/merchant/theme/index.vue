@@ -63,6 +63,18 @@
       </el-table-column>
     </el-table>
 
+    <!-- pagination start -->
+    <div v-show="!listLoading" class="pagination-container">
+      <el-pagination @size-change="handleSizeChange"
+                     @current-change="handleCurrentChange"
+                     :current-page.sync="listQuery.pageNo"
+                     :page-sizes="[10,20,30, 50]"
+                     :page-size="listQuery.pageSize"
+                     layout="total, sizes, prev, pager, next, jumper"
+                     :total="total"></el-pagination>
+    </div>
+    <!-- pagination end -->
+
     <el-dialog :title="textMap[dialogStatus]" size="tiny" :visible.sync="dialogFormVisible">
       <el-form class="small-space" autoComplete="on" :model="themeBean" :rules="themeRules" ref="themeForm" label-position="left" label-width="70px" style='width: 60%; margin-left:50px;'>
 
@@ -101,7 +113,7 @@
 
 <script>
   import * as themeService from '@/api/merchants/theme'
-  import { EXCEPTION_STATUS_DESC_MAP } from '@/common/constants'
+  import { EXCEPTION_STATUS_DESC_MAP, PAGINATION_PAGENO, PAGINATION_PAGESIZE, PAGINATION_PAGETOTAL } from '@/common/constants'
   import { Helper } from '@/common/helper'
   export default {
     name: 'themeList',
@@ -115,9 +127,11 @@
       }
       return {
         listLoading: true,
-        total: 1000,
+        total: PAGINATION_PAGETOTAL,
         listQuery: {
-          name: ''
+          name: undefined,
+          pageNo: PAGINATION_PAGENO,
+          pageSize: PAGINATION_PAGESIZE
         },
         themeBean: {
           name: ''
@@ -163,7 +177,7 @@
       // 获取列表
       getList () {
         this.listLoading = true
-        themeService.fetchThemeList().then(response => {
+        themeService.fetchThemeList(this.listQuery).then(response => {
           const result = response.data
           if (response.status === 200 && result.code === 0) {
             this.list = result.data.infos
@@ -184,17 +198,16 @@
           this.listLoading = false
         })
       },
-      // TODO 查询
       handleFilter () {
         this.getList()
       },
-      handleCurrentChange (pageIndex) {
-        // TODO pagination change current page
-        console.log('click page: ' + pageIndex)
+      handleCurrentChange (pageNo) {
+        this.listQuery.pageNo = pageNo
+        this.getList()
       },
-      handleSizeChange (pageIndex) {
-        // TODO pagination change page size
-        console.log('click page size: ' + pageIndex)
+      handleSizeChange (pageSize) {
+        this.listQuery.pageSize = pageSize
+        this.getList()
       },
       // 重置弹窗表单
       resetDialogFormBean () {
@@ -206,7 +219,8 @@
       resetListQuery () {
         this.listQuery = {
           name: undefined,
-          code: undefined
+          pageNo: PAGINATION_PAGENO,
+          pageSize: PAGINATION_PAGESIZE
         }
       },
       // 点击刷新

@@ -11,16 +11,20 @@
 import request from '@/common/ajax'
 
 /**
- * 获取区域代码
+ * 获取乐生活列表
  * @param query
  */
 export function fetchSpicyLeaderList (query) {
   return request.post({
     reqMethod: 'operation.popularize.magazine.operate.getAllMagazine',
-    params: {}
+    params: query
   })
 }
 
+/**
+ * 新增一期文章
+ * @param params
+ */
 export function createSpicyLeader (params) {
   return request.post({
     reqMethod: 'operation.popularize.magazine.operate.saveMagazine',
@@ -28,6 +32,10 @@ export function createSpicyLeader (params) {
   })
 }
 
+/**
+ * 编辑期数
+ * @param params
+ */
 export function editSpicyLeader (params) {
   return request.post({
     reqMethod: 'operation.popularize.magazine.operate.updateMagazine',
@@ -35,6 +43,11 @@ export function editSpicyLeader (params) {
   })
 }
 
+/**
+ * 发布| 下架
+ * @param id      期数ID
+ * @param status  状态
+ */
 export function publishSpicyLeader (id, status) {
   return request.post({
     reqMethod: 'operation.popularize.magazine.operate.updateMagazine',
@@ -42,6 +55,11 @@ export function publishSpicyLeader (id, status) {
   })
 }
 
+/**
+ * 删除乐生活期数记录
+ * @param id      期数ID
+ * @param status
+ */
 export function deleteSpicyLeader (id, status = -1) {
   return request.post({
     reqMethod: 'operation.popularize.magazine.operate.deleteMagazine',
@@ -49,6 +67,10 @@ export function deleteSpicyLeader (id, status = -1) {
   })
 }
 
+/**
+ * 根据ID获取期数记录
+ * @param id
+ */
 export function fetchSpicyLeaderById (id) {
   return request.get({
     reqMethod: 'operation.popularize.magazine.operate.selectMagazine',
@@ -58,7 +80,10 @@ export function fetchSpicyLeaderById (id) {
 
 // ----------- Vote  Service -------------------
 // =============================================
-
+/**
+ * 发起投票
+ * @param params
+ */
 export function createVote (params) {
   return request.post({
     reqMethod: 'operation.popularize.magazine.operate.saveMagazineVote',
@@ -66,6 +91,10 @@ export function createVote (params) {
   })
 }
 
+/**
+ * 修改投票
+ * @param params
+ */
 export function updateVote (params) {
   return request.post({
     reqMethod: 'operation.popularize.magazine.operate.saveMagazineVote',
@@ -73,6 +102,10 @@ export function updateVote (params) {
   })
 }
 
+/**
+ * 根据投票ID 获取投票记录
+ * @param vid
+ */
 export function fetchVoteById (vid) {
   return request.post({
     reqMethod: 'operation.popularize.magazine.operate.selectMagazineVote',
@@ -80,6 +113,10 @@ export function fetchVoteById (vid) {
   })
 }
 
+/**
+ * 根据杂志（期数）ID获取 杂记所有投票记录
+ * @param magazineId
+ */
 export function fetchVotesByMagazineId (magazineId) {
   return request.post({
     reqMethod: 'operation.popularize.magazine.operate.getMagazineVote',
@@ -87,6 +124,11 @@ export function fetchVotesByMagazineId (magazineId) {
   })
 }
 
+/**
+ * 删除投票
+ * @param id
+ * @param status
+ */
 export function deleteVote (id, status = -1) {
   return request.post({
     reqMethod: 'operation.popularize.magazine.operate.deleteMagazineVote',
@@ -94,16 +136,25 @@ export function deleteVote (id, status = -1) {
   })
 }
 
-export function enableVote (status) {
+/**
+ * 启用|禁用投票
+ * @param magazineId
+ * @param status
+ */
+export function enableVote (id, magazineId, status) {
   return request.post({
-    reqMethod: 'operation.popularize.magazine.operate.enableMagazineVote',
-    params: {status}
+    reqMethod: 'operation.popularize.magazine.operate.saveMagazineVote',
+    params: {id, magazineId, status, voteItemList: []}
   })
 }
 
 // ----------- Vote Item Service ---------------
 // =============================================
 
+/**
+ * 根据投票主题ID 获取投票项信息
+ * @param voteId
+ */
 export function fetchVoteItemList (voteId) {
   return request.get({
     reqMethod: 'operation.popularize.magazine.operate.getAllMagazineVoteOptions',
@@ -111,6 +162,10 @@ export function fetchVoteItemList (voteId) {
   })
 }
 
+/**
+ * 创建投票项
+ * @param params
+ */
 export function createVoteItem (params) {
   return request.post({
     reqMethod: 'operation.popularize.magazine.operate.saveMagazineVoteOptions',
@@ -118,6 +173,10 @@ export function createVoteItem (params) {
   })
 }
 
+/**
+ * 更新投票项
+ * @param params
+ */
 export function updateVoteItem (params) {
   return request.post({
     reqMethod: 'operation.popularize.magazine.operate.updateMagazineVoteOptions',
@@ -125,6 +184,10 @@ export function updateVoteItem (params) {
   })
 }
 
+/**
+ * 根据投票项ID获取投票项信息
+ * @param id
+ */
 export function fetchVoteItemById (id) {
   return request.post({
     reqMethod: 'operation.popularize.magazine.operate.selectMagazineVoteOptions',
@@ -132,6 +195,10 @@ export function fetchVoteItemById (id) {
   })
 }
 
+/**
+ * 删除投票项
+ * @param id
+ */
 export function deleteVoteItem (id) {
   return request.post({
     reqMethod: 'operation.popularize.magazine.operate.deleteMagazineVoteOptions',

@@ -349,9 +349,10 @@
         this.isDisabled = true
         this.dialogFormVisible = true
       },
-      handleSwitch (val) {
-        alert(val)
-        showMenuItem()
+      handleSwitch (val, row) {
+        showMenuItem(row.id, val === 0 ? 1 : 0).then(response => {
+          this.updateMenu()
+        })
       },
       // 点击删除按钮
       handleDelete (row) {

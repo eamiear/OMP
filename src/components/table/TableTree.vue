@@ -26,7 +26,8 @@
           <span v-else-if="index===0" class="space"></span>
 
           <div v-if="column.mode === 'switcher'">
-            <el-switch v-model="scope.row[column.dataIndex]" :on-value="1" :off-value="0" on-text="" off-text="" @change="emitChange"> </el-switch>
+            <el-switch v-model="scope.row[column.dataIndex]" :on-value="1" :off-value="0" on-text="" off-text="" @click.native="emitChange(scope.row[column.dataIndex], scope.row)"> </el-switch>
+            <!--<multiSwitch :extra="scope.row" :model="scope.row[column.dataIndex]" :onValue="1" :offValue="0" :onText="" :offText="" @onChange="emitChange"></multiSwitch>-->
           </div>
           <div v-else-if="column.mode === 'icon'">
             <icon style="font-size: 16px;" :name="scope.row[column.dataIndex] ? scope.row[column.dataIndex] : ''"></icon>
@@ -159,9 +160,8 @@
       emitDelete (row) {
         this.$emit('delete', row)
       },
-      emitChange (val) {
-//        this.$emit('switchChange', {row: row, val: val})
-        this.$emit('switchChange', val)
+      emitChange (val, row) {
+        this.$emit('switchChange', val, row)
       }
     }
   }

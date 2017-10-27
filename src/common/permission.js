@@ -46,7 +46,7 @@ router.beforeEach((to, from, next) => {
                 next({ path: '/login' })
               })
             }
-            process.env.NODE_ENV === 'production' && console.log(res)
+            // process.env.NODE_ENV === 'production' && console.log(res)
             next({path: '/login'})
           } else {
             const roles = []

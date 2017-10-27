@@ -10,17 +10,18 @@
 
 import request from '@/common/ajax'
 
-export function fetchThemeList () {
+export function fetchThemeList (query) {
   return request.post({
     // url: '/spicyleader/theme/fetch',
-    reqMethod: 'popularize.magazine.operate.getAllTag'
+    reqMethod: 'operation.popularize.magazine.operate.getAllTag',
+    params: query
   })
 }
 
 export function createThemeItem (params) {
   return request.post({
     // url: '/spicyleader/theme/create',
-    reqMethod: 'popularize.magazine.operate.saveMagazineTag',
+    reqMethod: 'operation.popularize.magazine.operate.saveMagazineTag',
     params: params
   })
 }
@@ -28,7 +29,7 @@ export function createThemeItem (params) {
 export function updateThemeItem (params) {
   return request.post({
     // url: '/spicyleader/theme/update',
-    reqMethod: 'popularize.magazine.operate.updateMagazineTag',
+    reqMethod: 'operation.popularize.magazine.operate.updateMagazineTag',
     params: params
   })
 }
@@ -36,7 +37,7 @@ export function updateThemeItem (params) {
 export function deleteThemeItem (id) {
   return request.post({
     // url: '/spicyleader/theme/delete',
-    reqMethod: 'popularize.magazine.operate.deleteMagazineTag',
+    reqMethod: 'operation.popularize.magazine.operate.deleteMagazineTag',
     params: {id}
   })
 }
@@ -44,21 +45,21 @@ export function deleteThemeItem (id) {
 export function fetchThemeItemById (id) {
   return request.post({
     // url: '/spicyleader/theme/select',
-    reqMethod: 'popularize.magazine.operate.selectTag',
+    reqMethod: 'operation.popularize.magazine.operate.selectTag',
     params: {id}
   })
 }
 
 export function searchThemeByName (name) {
   return request.post({
-    reqMethod: 'popularize.magazine.operate.getMagazineTag',
+    reqMethod: 'operation.popularize.magazine.operate.getMagazineTag',
     params: {name}
   })
 }
 
 export function searchThemeById (id) {
   return request.post({
-    reqMethod: 'popularize.magazine.operate.getMagazineTag',
+    reqMethod: 'operation.popularize.magazine.operate.getMagazineTag',
     params: {id}
   })
 }

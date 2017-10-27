@@ -29,6 +29,14 @@
                 <el-input type="input" placeholder="一" v-model="spicyForm.periods"></el-input>
               </el-form-item>
             </el-col>
+
+            <el-col :span="8">
+              <el-form-item label="商场" class="postInfo-container-item" prop="mallId">
+                <el-select clearable class="filter-item" placeholder="选择商场" v-model="spicyForm.mallId" @visible-change="fetchMallList">
+                  <el-option v-for="item in malls" :key="item.id" :label="item.name" :value="item.id"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
           </el-row>
         </el-col>
         <el-col :span="24">
@@ -80,6 +88,7 @@
           title: '', // 文章题目
           childTitle: '',
           tagId: undefined,  // 主题
+          mallId: undefined,
           periods: '',  // 期数
           content: '', // 文章内容
           abstracts: '',
@@ -87,6 +96,7 @@
           id: undefined
         },
         themes: [],
+        malls: [],
         abstractTotal: 120,
         fetchSuccess: true,
         loading: false,
@@ -136,6 +146,11 @@
               this.themes = result.data.infos || []
             }
           })
+        }
+      },
+      fetchMallList () {
+        if (!this.malls.length) {
+          // TODO
         }
       },
       handleSubmit () {

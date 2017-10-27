@@ -2,7 +2,7 @@
   <div class="app-container">
     <!-- toolbar start -->
     <div class="filter-container">
-      <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" placeholder="期数/主题/标题" v-model="listQuery.name"></el-input>
+      <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" placeholder="期数/主题/标题/商场" v-model="listQuery.name"></el-input>
       <el-button class="filter-item" type="primary" icon="search" @click="handleFilter">搜索</el-button>
       <router-link :to="{path: '/merchant/spicyleader/create'}">
         <el-button class="filter-item" type="primary" icon="fa-plus" @click="handleFilter">
@@ -49,6 +49,12 @@
         </template>
       </el-table-column>
 
+      <el-table-column align="center" label="商场">
+        <template scope="scope">
+          <span>{{scope.row.mallName}}</span>
+        </template>
+      </el-table-column>
+
       <el-table-column align="center" label="创建时间">
         <template scope="scope">
           <span>{{scope.row.createTime | dateFormat}}</span>
@@ -81,7 +87,7 @@
 
       <el-table-column align="center" label="投票状态" min-width="110px">
         <template scope="scope">
-          <el-button size="small" :type="scope.row.voteStatus | voteStatusStyleFilter" @click="enableVote(scope.row.voteStatus)">{{scope.row.voteStatus | voteStatusLabelFilter}}</el-button>
+          <el-button size="small" :type="scope.row.voteStatus | voteStatusStyleFilter" @click="enableVote(scope.row)">{{scope.row.voteStatus | voteStatusLabelFilter}}</el-button>
           <el-button size="small" @click="handleVote(scope.row)">{{scope.row.voteId | voteLabelFilter}}</el-button>
         </template>
       </el-table-column>
@@ -100,9 +106,9 @@
     <div v-show="!listLoading" class="pagination-container">
       <el-pagination @size-change="handleSizeChange"
                      @current-change="handleCurrentChange"
-                     :current-page.sync="listQuery.page"
+                     :current-page.sync="listQuery.pageNo"
                      :page-sizes="[10,20,30, 50]"
-                     :page-size="listQuery.limit"
+                     :page-size="listQuery.pageSize"
                      layout="total, sizes, prev, pager, next, jumper"
                      :total="total"></el-pagination>
     </div>
@@ -159,13 +165,11 @@
     <!-- Vote operation end-->
 
     <!-- preview paragraph  start -->
-    <el-dialog title="文章预览" size="full" :visible.sync="previewDialogVisible">
-      <el-form class="small-space" autoComplete="on" :model="previewModel" ref="previewForm" label-position="left" label-width="70px" style='width: 60%; margin-left:50px;'>
+    <el-dialog title="文章预览" size="full" :visible="previewDialogVisible">
+      <!--<el-form class="small-space" autoComplete="on" :model="previewModel" ref="previewForm" label-position="left" label-width="70px" style='width: 60%; margin-left:50px;'>-->
 
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="previewDialogVisible = false">确 定</el-button>
-      </div>
+      <!--</el-form>-->
+      <spicy-preview :magazineId="previewMagazineId" :key="previewMagazineId"></spicy-preview>
     </el-dialog>
     <!-- preview paragraph end -->
 
@@ -234,15 +238,15 @@
 </style>
 
 <script>
-//  import { fetchMenuList, createMenuItem, editMenuItem, deleteMenuItem } from '@/api/system_menu'
   import * as SpicyLeader from '@/api/merchants/spicyleader'
   import { getQiNiuToken } from '@/api/common/qiniu'
   import { success, error, info } from '@/utils/dialog'
-  import { EXCEPTION_STATUS_DESC_MAP, QINIU_IMAGE_REQUEST_BASEURL, QINIU_UPLOAD_URL } from '@/common/constants'
+  import { EXCEPTION_STATUS_DESC_MAP, QINIU_IMAGE_REQUEST_BASEURL, QINIU_UPLOAD_URL, PAGINATION_PAGENO, PAGINATION_PAGESIZE, PAGINATION_PAGETOTAL } from '@/common/constants'
   import { Helper } from '@/common/helper'
   import { Utopa } from '@/common/utopa'
   import TableTree from '@/components/table/TableTree'
   import MultiUpload from '@/components/Upload/multiUpload'
+  import SpicyPreview from './preview'
   import { dateFormat } from '@/filters'
   import Vote from './vote'
 
@@ -251,43 +255,15 @@
     data () {
       return {
         listLoading: true,
-        total: 1000,
+        total: PAGINATION_PAGETOTAL,
         listQuery: {
-          page: 1,
-          limit: 20,
+          pageNo: PAGINATION_PAGENO,
+          pageSize: PAGINATION_PAGESIZE,
           title: undefined,
-          periods: undefined
+          tagName: '',
+          periods: undefined,
+          mallName: undefined
         },
-        columns: [
-          {
-            text: '菜单名称',
-            dataIndex: 'name'
-          },
-          {
-            text: '地域编码',
-            dataIndex: 'code'
-          },
-          {
-            text: '父编码',
-            dataIndex: 'pcode'
-          },
-          {
-            text: '排序',
-            dataIndex: 'order'
-          },
-          {
-            text: '创建时间',
-            dataIndex: 'createTime'
-          },
-          {
-            text: '更新时间',
-            dataIndex: 'updateTime'
-          },
-          {
-            text: '更新者',
-            dataIndex: 'operator'
-          }
-        ],
         tableKey: 0,
         utopaTableHeight: 0,
         dataSource: [],
@@ -328,13 +304,16 @@
 
         // preview dialog
         previewDialogVisible: false,
-        previewModel: {}
+        previewModel: {},
+        previewMagazineId: undefined,
+        previewVoteId: undefined
       }
     },
     components: {
       TableTree,
       Vote,
-      MultiUpload
+      MultiUpload,
+      SpicyPreview
     },
     filters: {
       statusStyleFilter (status) {
@@ -374,7 +353,6 @@
       this.fixLayout()
       window.onresize = () => {
         return (() => {
-          console.log(this.fixLayout)
           this.fixLayout()
         })()
       }
@@ -393,12 +371,14 @@
       // 获取列表
       getList () {
         this.listLoading = true
-        SpicyLeader.fetchSpicyLeaderList().then(response => {
+        SpicyLeader.fetchSpicyLeaderList(this.listQuery).then(response => {
           const result = response.data
-          if (response.status === 200 && result.code === 0) {
+          if (Utopa.isValidRequest(response)) {
             this.list = result.data.infos
             this.total = result.data.total
           }
+          this.listLoading = false
+        }).catch(() => {
           this.listLoading = false
         })
       },
@@ -407,14 +387,14 @@
         this.getList()
       },
       // 分页 -- 点击当前页
-      handleCurrentChange (pageIndex) {
-        // TODO pagination change current page
-        console.log('click page: ' + pageIndex)
+      handleCurrentChange (pageNo) {
+        this.listQuery.pageNo = pageNo
+        this.getList()
       },
       // 分页 -- 选择页数
-      handleSizeChange (pageIndex) {
-        // TODO pagination change page size
-        console.log('click page size: ' + pageIndex)
+      handleSizeChange (pageSize) {
+        this.listQuery.pageSize = pageSize
+        this.getList()
       },
       // 根据节点ID删除节点
       delNodeById (dataSource, nId) {
@@ -455,14 +435,18 @@
       // 重置查询列表
       resetListQuery () {
         this.listQuery = {
-          name: undefined,
-          code: undefined
+          pageNo: PAGINATION_PAGENO,
+          pageSize: PAGINATION_PAGESIZE,
+          title: undefined,
+          periods: undefined
         }
       },
       // 文章预览
       handlePreview (row) {
         // TODO preview record
         this.resetPreviewModel()
+        this.previewMagazineId = row.id
+        this.previewVoteId = row.voteId
         this.previewDialogVisible = true
       },
       // 发布/下架文章
@@ -550,7 +534,7 @@
 //        })
         this.dialogFormVisible = false
       },
-      // 删除业务操作
+      // 删除期数业务操作
       remove (id) {
         return SpicyLeader.deleteSpicyLeader(id)
       },
@@ -560,42 +544,54 @@
       handleVote (row) {
         row.voteId ? this.updateVoteHandle(row) : this.createVoteHandle(row)
       },
+      // 发起投票弹窗处理
       createVoteHandle (row) {
         this.resetVoteModel()
         this.voteModel.magazineId = row.id
         this.dialogStatus = 'create'
         this.dialogFormVisible = true
       },
+      // 更新投票弹窗处理
       updateVoteHandle (row) {
         this.dialogStatus = 'update'
         this.dialogFormVisible = true
         SpicyLeader.fetchVotesByMagazineId(row.id).then(response => {
-          console.log(response)
-          // TODO init VoteModel
-          this.voteModel = {}
+          const result = response.data.data
+          if (Utopa.isValidRequest(response)) {
+            this.voteModel = result
+            this.voteModel.id = row.voteId
+            this.voteModel.magazineId = row.id
+            this.voteModel.overdue = new Date(this.voteModel.overdue)
+          }
+        }).catch(err => {
+          Helper.log(err)
         })
       },
       // 启用/禁用投票
-      enableVote (voteStatus) {
-        // TODO
+      enableVote (vote) {
         const statusMap = {
-          0: '禁用',
-          1: '启用'
+          0: '启用',
+          1: '禁用'
         }
-        SpicyLeader.enableVote(voteStatus).then((response) => {
-          const result = response.data
-          Utopa.isValidRequest(response) ? success((statusMap[voteStatus] || '操作') + '成功') : error(EXCEPTION_STATUS_DESC_MAP[result.code] || ((statusMap[voteStatus] || '操作') + '失败'))
+        SpicyLeader.enableVote(vote.voteId, vote.id, vote.voteStatus === 0 ? 1 : 0).then((response) => {
+          if (Utopa.isValidRequest(response)) {
+            success((statusMap[vote.voteStatus] || '操作') + '成功')
+            vote.voteStatus = vote.voteStatus === 0 ? 1 : 0
+          } else {
+            error(Utopa.failTips(response, (statusMap[vote.voteStatus] || '操作') + '失败'))
+          }
         }).catch(err => {
-          console.log(err)
+          Helper.log(err)
           error('服务出错')
         })
       },
+      // 头像上传成功
       handleVoteAvatarScucess (response, file, fileList, vote) {
         const qiniuServer = QINIU_IMAGE_REQUEST_BASEURL
         vote.image = qiniuServer + response.key
       },
+      // 头像上传前的处理
       beforeVoteAvatarUpload () {
-        // TODO
         const _this = this
         return new Promise((resolve, reject) => {
           getQiNiuToken().then(response => {
@@ -603,7 +599,7 @@
             _this.voteData.token = token
             resolve(true)
           }).catch(err => {
-            console.log(err)
+            Helper.log(err)
             reject(false)
           })
         })
@@ -611,7 +607,7 @@
       // add a new vote item option
       addVoteItem () {
         if (!(this.voteModel && this.voteModel.voteItemList)) {
-          console.log('voteModel is empty!')
+          Helper.log('voteModel is empty!')
           return false
         }
         if (this.voteModel.length >= 5) {
@@ -626,8 +622,18 @@
       },
       // remove vote item option
       removeVoteItem (vote) {
-        const index = this.voteModel.voteItemList.indexOf(vote)
-        index !== -1 && this.voteModel.voteItemList.splice(index, 1)
+        const _this = this
+        SpicyLeader.deleteVoteItem(vote.id).then(response => {
+          if (Utopa.isValidRequest(response)) {
+            const index = _this.voteModel.voteItemList.indexOf(vote)
+            index !== -1 && _this.voteModel.voteItemList.splice(index, 1)
+          } else {
+            error(response.data.msg)
+          }
+        }).catch(err => {
+          error('服务出错!')
+          Helper.log('deleteVoteItem -> ', err)
+        })
       },
       // create vote item
       createVote () {
@@ -644,7 +650,7 @@
               }
               _this.dialogFormVisible = false
             }).catch(err => {
-              console.log(err)
+              Helper.log(err)
               error('服务出错')
             })
           }
@@ -665,7 +671,7 @@
               }
               _this.dialogFormVisible = false
             }).catch(err => {
-              console.log(err)
+              Helper.log(err)
               error('服务出错')
             })
           }
