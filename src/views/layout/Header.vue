@@ -2,6 +2,7 @@
   <header class="main-header">
     <!-- Logo -->
     <a href="#" class="logo">
+      <span class="logo-image"><img :src="utopaLogo" alt="utopa"></span>
       <span class="logo-lg">优托邦运营管理平台</span>
     </a>
     <!-- Header Navbar -->
@@ -14,13 +15,13 @@
           <!-- User Account: style can be found in dropdown.less -->
           <li class="user user-menu">
             <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
-              <img :src="avatar" class="user-image" alt="User Image">
+              <img v-if="avatar" :src="avatar" class="user-image" alt="User Image">
               <span class="hidden-xs">{{name}}</span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
               <li class="user-header">
-                <img :src="avatar" class="img-circle" alt="User Image">
+                <img :src="avatar" class="img-circle" alt="potrait">
 
                 <p>
                   {{name}}<br>
@@ -55,6 +56,7 @@
   import { mapGetters } from 'vuex'
   import Toggle from '@/components/Toggle'
   import { slimScroll } from '@/utils/plug'
+  import logo from '@/assets/image/logo.png'
 
   export default {
     components: {
@@ -62,7 +64,8 @@
     },
     data () {
       return {
-        openUserMenu: false
+        openUserMenu: false,
+        utopaLogo: logo
       }
     },
     props: {

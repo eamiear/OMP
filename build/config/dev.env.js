@@ -7,6 +7,7 @@
 // const flag = 1
 module.exports = {
   NODE_ENV: '"development"',
-  BASE_API: '"http://192.168.239.51:8080/ting-common-entry/app.do"',
-  APP_ORIGIN: '"https://wallstreetcn.com"'
+  // BASE_API: '"http://192.168.239.51:8080/ting-common-entry/app.do"',
+  BASE_API: '"ting-common-entry/app.do"',
+  APP_ORIGIN: '"http://utopa.com"'
 }

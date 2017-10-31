@@ -150,7 +150,7 @@
           },
           {
             text: '层级',
-            width: '70px',
+//            width: '70px',
             dataIndex: 'level'
           },
           {
@@ -160,21 +160,21 @@
           },
           {
             text: '访问路径',
-            width: '200px',
+//            width: '200px',
             align: 'left',
             style: 'link-type',
             dataIndex: 'path'
           },
           {
             text: '组件路径',
-            width: '200px',
+//            width: '200px',
             align: 'left',
             style: 'link-type',
             dataIndex: 'component'
           },
           {
             text: '重定向路径',
-            width: '200px',
+//            width: '200px',
             style: 'link-type',
             align: 'left',
             dataIndex: 'redirect'
@@ -205,12 +205,12 @@
           },
           {
             text: '排序',
-            width: '70px',
+//            width: '70px',
             dataIndex: 'sortOrder'
           },
           {
             text: '显示',
-            width: '70px',
+//            width: '70px',
             mode: 'switcher',
             dataIndex: 'isShow'
           }
@@ -258,6 +258,11 @@
         console.log(showColumn)
 //        this.columns.push(showColumn)
         this.key = this.key + 1
+      },
+      dialogFormVisible (val) {
+        if (val === false) {
+          this.$refs.menuForm.resetFields()
+        }
       }
     },
     created () {

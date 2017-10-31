@@ -14,7 +14,7 @@
 		</el-upload>
 		<div class="image-preview image-app-preview">
 			<div class="image-preview-wrapper" v-show="imageUrl.length>1">
-				<div class='app-fake-conver'>OO</div>
+				<div class='app-fake-conver'></div>
 				<img :src="imageUrl">
 				<div class="image-preview-action">
 					<i @click="removeImage" class="el-icon-delete"></i>
@@ -26,6 +26,7 @@
 
 <script>
 import { getQiNiuToken } from '@/api/common/qiniu'
+import { QINIU_IMAGE_REQUEST_BASEURL, QINIU_UPLOAD_URL } from '@/common/constants'
 import { Helper } from '@/common/helper'
 
 export default {
@@ -47,7 +48,7 @@ export default {
   data () {
     return {
       // TODO get action url from server
-      action: 'http://upload-z2.qiniu.com',
+      action: QINIU_UPLOAD_URL,
 //      data: { token: '', key: ''}
       data: { token: '' }
     }
@@ -61,7 +62,7 @@ export default {
     },
     handleImageScucess (response, file) {
       // TODO get request url from server
-      const qiniuServer = 'http://ox2m2b48s.bkt.clouddn.com/'
+      const qiniuServer = QINIU_IMAGE_REQUEST_BASEURL
       this.emitInput(qiniuServer + response.key)
     },
     validateFileSize (bytes) {

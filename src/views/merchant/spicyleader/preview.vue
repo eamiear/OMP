@@ -1,6 +1,11 @@
 <template>
   <div class="spicy-preview-wrapper">
+    <router-link :to="{path: '/merchant/spicyleader/create', query: { isEdit: true, id: magazineId }}">
+      <button type="button" class="page-edit btn btn-light-blue"><icon name="edit"></icon></button>
+    </router-link>
+
     <div class="page">
+      <p class="periods"><span>第{{contentModel.periods}}期</span></p>
       <div class="content" v-html="contentModel.content"></div>
       <div class="vote">
         <h3 class="vote-label">投票</h3>
@@ -14,13 +19,13 @@
             </div>
             <div class="vote-list-item-detail">
               <div class="vote-list-item-detail-desc">{{voteItem.title}}</div>
-              <el-progress :text-inside="false" :show-text="true" :stroke-width="12" :percentage="voteItem.votes || 0" ></el-progress>
+              <el-progress :text-inside="false" :show-text="true" :stroke-width="12" :percentage="voteItem.votes | progressFilter" ></el-progress>
             </div>
           </li>
         </ul>
       </div>
       <div class="comments">
-        <div class="comments-title">精选评论（5）</div>
+        <div class="comments-title">精选评论（{{commentsTotal}}）</div>
         <ul class="comments-list">
           <li class="comments-list-item"  v-for="comment in commentsModel">
             <div class="v-avatar">
@@ -44,6 +49,7 @@
 
 <script>
   import * as SpicyLeader from '@/api/merchants/spicyleader'
+  import { fetchCriticalComments } from '@/api/system/comments'
   export default {
     name: 'spicy-preview',
     data () {
@@ -52,43 +58,44 @@
           content: ''
         },
         voteModel: {},
+        commentsTotal: 0,
         commentsModel: [
-          {
-            image: 'http://placehold.it/100x100',
-            nickName: '范德萨',
-            content: '发的规范和规范会计贵航股份东方闪电疯疯癫癫防守打法多少岁方法',
-            createTime: 1507721543000
-          },
-          {
-            image: 'http://placehold.it/100x100',
-            nickName: '范德萨',
-            content: '发的规范和规范会计贵航股份东方闪电疯疯癫癫防守打法多少岁方法',
-            createTime: 1507721543000
-          },
-          {
-            image: 'http://placehold.it/100x100',
-            nickName: '范德萨',
-            content: '发的规范和规范会计贵航股份东方闪电疯疯癫癫防守打法多少岁方法',
-            createTime: 1507721543000
-          },
-          {
-            image: 'http://placehold.it/100x100',
-            nickName: '范德萨',
-            content: '发的规范和规范会计贵航股份东方闪电疯疯癫癫防守打法多少岁方法',
-            createTime: 1507721543000
-          },
-          {
-            image: 'http://placehold.it/100x100',
-            nickName: '范德萨',
-            content: '发的规范和规范会计贵航股份东方闪电疯疯癫癫防守打法多少岁方法',
-            createTime: 1507721543000
-          },
-          {
-            image: 'http://placehold.it/100x100',
-            nickName: '范德萨',
-            content: '发的规范和规范会计贵航股份东方闪电疯疯癫癫防守打法多少岁方法',
-            createTime: 1507721543000
-          }
+//          {
+//            image: 'http://placehold.it/100x100',
+//            nickName: '范德萨',
+//            content: '发的规范和规范会计贵航股份东方闪电疯疯癫癫防守打法多少岁方法',
+//            createTime: 1507721543000
+//          },
+//          {
+//            image: 'http://placehold.it/100x100',
+//            nickName: '范德萨',
+//            content: '发的规范和规范会计贵航股份东方闪电疯疯癫癫防守打法多少岁方法',
+//            createTime: 1507721543000
+//          },
+//          {
+//            image: 'http://placehold.it/100x100',
+//            nickName: '范德萨',
+//            content: '发的规范和规范会计贵航股份东方闪电疯疯癫癫防守打法多少岁方法',
+//            createTime: 1507721543000
+//          },
+//          {
+//            image: 'http://placehold.it/100x100',
+//            nickName: '范德萨',
+//            content: '发的规范和规范会计贵航股份东方闪电疯疯癫癫防守打法多少岁方法',
+//            createTime: 1507721543000
+//          },
+//          {
+//            image: 'http://placehold.it/100x100',
+//            nickName: '范德萨',
+//            content: '发的规范和规范会计贵航股份东方闪电疯疯癫癫防守打法多少岁方法',
+//            createTime: 1507721543000
+//          },
+//          {
+//            image: 'http://placehold.it/100x100',
+//            nickName: '范德萨',
+//            content: '发的规范和规范会计贵航股份东方闪电疯疯癫癫防守打法多少岁方法',
+//            createTime: 1507721543000
+//          }
         ]
       }
     },
@@ -98,6 +105,11 @@
     },
     created () {
       this.initPage()
+    },
+    filters: {
+      progressFilter (val) {
+        return !val ? 0 : val > 100 ? 100 : val
+      }
     },
     methods: {
       initPage () {
@@ -112,13 +124,14 @@
       },
       getVotes () {
         SpicyLeader.fetchVotesByMagazineId(this.magazineId).then(response => {
-          console.log('votes ', response)
-          this.voteModel = response.data.data
+          this.voteModel = response.data.data || {}
         })
       },
       getComments () {
-        // TODO
-        // this.commentsModel = response.data.data
+        fetchCriticalComments(this.magazineId).then(response => {
+          this.commentsModel = response.data.data.infos || []
+          this.commentsTotal = response.data.data.total
+        })
       }
     }
   }
@@ -130,8 +143,20 @@
     padding: 0;
     list-style: none;
   }
+
+  .el-dialog--full{
+    background: rgba(0, 0, 0, 0.9);
+    .el-dialog__title{
+      color: #b3b2b2;
+    }
+  }
+  .spicy-preview-wrapper,
+  .spicy-preview-wrapper .page{
+    border-radius: 7px;
+  }
   .spicy-preview-wrapper {
-    margin: 28px 65px;
+    /*margin: 28px 65px;*/
+    margin: 0 auto;
     width: 375px;
     height: 667px;
     position: relative;
@@ -140,6 +165,13 @@
     z-index: 156;
     font-family: 'microsoft yahei';
 
+    .page-edit{
+      position: absolute;
+      top: 0;
+      left: 100%;
+      margin-left: 10px;
+      color: #fff;
+    }
     .page {
       width: 375px;
       padding: 10px;
@@ -149,14 +181,32 @@
       background: #fff;
       overflow-y: auto;
     }
+    .page .periods{
+      text-align: right;
+      padding: 5px;
+      font-size: 13px;
+      color: #999;
+      margin-bottom: 0;
+    }
+    .page .content{
+      padding: 5px 0;
+
+      img {
+        max-width:100%;
+      }
+    }
     .vote {
-      background: #eee;
+      background: #F6F6F6;
+      border:1px solid #FAFAFA;
       padding: 10px 12px;
 
       .vote-label{
         font-size: 14px;
-        color: #000;
+        color: #FB8A75;
         text-align: center;
+        margin: 15px 0;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #c5c5c5;
       }
       .vote-desc{
         font-size: 13px;
@@ -200,18 +250,15 @@
         color: #999;
       }
     }
-
     .comments{
       margin-top: 20px;
       padding: 10px 12px;
-
       .comments-title{
         color: #999;
         font-size: 12px;
         padding:0 0 10px;
         border-bottom: 1px solid #eee;
       }
-
       .comments-list{
         .comments-list-item{
           padding: 10px 0 20px;

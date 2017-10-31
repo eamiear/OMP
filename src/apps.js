@@ -1,4 +1,5 @@
 // entry
+import 'babel-polyfill'
 import '@/utils/css'
 import '@/utils/scripts'
 import '@/common/permission' // 权限

@@ -2,10 +2,11 @@
   <div class="app-container">
     <!-- toolbar start -->
     <div class="filter-container">
-      <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" placeholder="期数/主题/标题/商场" v-model="listQuery.name"></el-input>
+      <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" placeholder="标题" v-model="listQuery.title"></el-input>
+      <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" placeholder="主题" v-model="listQuery.tagName"></el-input>
       <el-button class="filter-item" type="primary" icon="search" @click="handleFilter">搜索</el-button>
       <router-link :to="{path: '/merchant/spicyleader/create'}">
-        <el-button class="filter-item" type="primary" icon="fa-plus" @click="handleFilter">
+        <el-button class="filter-item" type="primary" icon="fa-plus">
           新增
         </el-button>
       </router-link>
@@ -25,19 +26,19 @@
       :height="utopaTableHeight"
       style="width: 100%">
 
-      <el-table-column align="center" label="期数" width="90px" sortable>
+      <el-table-column align="center" label="期数" sortable>
         <template scope="scope">
           <span>第{{scope.row.periods}}期</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="标题" min-width="120px">
+      <el-table-column align="center" label="标题">
         <template scope="scope">
           <span class="link-type" @click="handlePreview(scope.row)">{{scope.row.title}}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="子标题" min-width="120px">
+      <el-table-column align="center" label="子标题">
         <template scope="scope">
           <span>{{scope.row.childTitle}}</span>
         </template>
@@ -124,7 +125,7 @@
         <el-form-item label="投票名称" prop="title" style="width: 60%;"
                       :rules="{required: true, message: '投票名称不能为空', trigger: 'blur'}">
           <el-input v-model="voteModel.title" autoComplete="on"></el-input>
-          <span class="counter inner">8/35</span>
+          <span class="counter inner">{{voteCount}}/{{voteTitleCount}}</span>
         </el-form-item>
 
         <el-form-item label="截止时间" prop="overdue"
@@ -139,6 +140,7 @@
                       :rules="{required: true, message: '选项不能为空', trigger: 'blur'}">
 
           <el-input style="width: 50%;" v-model="vote.title"></el-input>
+          <span class="counter inner" style="font-size: 12px;">最多输入{{voteTitleCount}}个字符</span>
           <MultiUpload
             :extra="vote"
             :postData="voteData"
@@ -165,11 +167,11 @@
     <!-- Vote operation end-->
 
     <!-- preview paragraph  start -->
-    <el-dialog title="文章预览" size="full" :visible="previewDialogVisible">
+    <el-dialog title="文章预览" size="full" :visible.sync="previewDialogVisible">
       <!--<el-form class="small-space" autoComplete="on" :model="previewModel" ref="previewForm" label-position="left" label-width="70px" style='width: 60%; margin-left:50px;'>-->
 
       <!--</el-form>-->
-      <spicy-preview :magazineId="previewMagazineId" :key="previewMagazineId"></spicy-preview>
+      <spicy-preview :magazineId="previewMagazineId" :key="previewKey"></spicy-preview>
     </el-dialog>
     <!-- preview paragraph end -->
 
@@ -260,7 +262,7 @@
           pageNo: PAGINATION_PAGENO,
           pageSize: PAGINATION_PAGESIZE,
           title: undefined,
-          tagName: '',
+          tagName: undefined,
           periods: undefined,
           mallName: undefined
         },
@@ -285,14 +287,17 @@
           voteItemList: [{
             title: '',
             image: '',
+            imageKey: '',
             sort: 0
           }, {
             title: '',
             image: '',
+            imageKey: '',
             sort: 0
           }, {
             title: '',
             image: '',
+            imageKey: '',
             sort: 0
           }]
         },
@@ -300,11 +305,14 @@
           title: [{required: true}]
         },
         voteAction: QINIU_UPLOAD_URL,
+        voteImageReqBaseUrl: QINIU_IMAGE_REQUEST_BASEURL,
         voteData: { token: '' },
+        voteTitleCount: 35,
 
         // preview dialog
         previewDialogVisible: false,
         previewModel: {},
+        previewKey: undefined,
         previewMagazineId: undefined,
         previewVoteId: undefined
       }
@@ -314,6 +322,38 @@
       Vote,
       MultiUpload,
       SpicyPreview
+    },
+    computed: {
+      voteCount () { // 摘要字数
+        return this.voteModel.title.length
+      }
+    },
+    watch: {
+      'voteModel.title': function (val) {
+        if (this.voteCount >= this.voteTitleCount) {
+          this.$nextTick(() => { this.voteModel.title = val.slice(0, this.voteTitleCount) })
+        }
+      },
+      'voteModel.voteItemList': {
+        handler: function (itemList) {
+          Array.from(itemList).forEach((item) => {
+            if (item.title.length >= this.voteTitleCount) {
+              this.$nextTick(() => { item.title = item.title.slice(0, this.voteTitleCount) })
+            }
+          })
+        },
+        deep: true
+      },
+      'dialogFormVisible': function (val) {
+        if (val === false) {
+          this.$refs.voteForm.resetFields()
+        }
+      },
+      'previewDialogVisible': function (val) {
+        if (val === true) {
+          this.previewKey = this.previewMagazineId + Math.random() * 10
+        }
+      }
     },
     filters: {
       statusStyleFilter (status) {
@@ -353,7 +393,7 @@
       this.fixLayout()
       window.onresize = () => {
         return (() => {
-          this.fixLayout()
+          this.$nextTick(() => { this.fixLayout() })
         })()
       }
     },
@@ -416,14 +456,17 @@
           voteItemList: [{
             title: '',
             image: '',
+            imageKey: '',
             sort: 0
           }, {
             title: '',
             image: '',
+            imageKey: '',
             sort: 0
           }, {
             title: '',
             image: '',
+            imageKey: '',
             sort: 0
           }]
         }
@@ -451,10 +494,9 @@
       },
       // 发布/下架文章
       handlePublish (row, action) {
-        const _this = this
         const actionMap = {
           'publish': 1,
-          'offshlef': 0
+          'offshelf': 0
         }
         const actionMsg = {
           'publish': '发布',
@@ -462,7 +504,7 @@
         }
         SpicyLeader.publishSpicyLeader(row.id, actionMap[action]).then((response) => {
           if (Utopa.isValidRequest(response)) {
-            _this.getList()
+            row.status = actionMap[action]
             success(actionMsg[action] + '成功')
           } else {
             error(actionMsg[action] + '失败')
@@ -589,6 +631,7 @@
       handleVoteAvatarScucess (response, file, fileList, vote) {
         const qiniuServer = QINIU_IMAGE_REQUEST_BASEURL
         vote.image = qiniuServer + response.key
+        vote.imageKey = response.key
       },
       // 头像上传前的处理
       beforeVoteAvatarUpload () {
@@ -617,23 +660,29 @@
         this.voteModel.voteItemList.push({
           title: '',
           image: '',
+          imageKey: '',
           sort: 0
         })
       },
       // remove vote item option
       removeVoteItem (vote) {
         const _this = this
-        SpicyLeader.deleteVoteItem(vote.id).then(response => {
-          if (Utopa.isValidRequest(response)) {
-            const index = _this.voteModel.voteItemList.indexOf(vote)
-            index !== -1 && _this.voteModel.voteItemList.splice(index, 1)
-          } else {
-            error(response.data.msg)
-          }
-        }).catch(err => {
-          error('服务出错!')
-          Helper.log('deleteVoteItem -> ', err)
-        })
+        if (!vote.id) {
+          const index = _this.voteModel.voteItemList.indexOf(vote)
+          index !== -1 && _this.voteModel.voteItemList.splice(index, 1)
+        } else {
+          SpicyLeader.deleteVoteItem(vote.id).then(response => {
+            if (Utopa.isValidRequest(response)) {
+              const index = _this.voteModel.voteItemList.indexOf(vote)
+              index !== -1 && _this.voteModel.voteItemList.splice(index, 1)
+            } else {
+              error(response.data.msg)
+            }
+          }).catch(err => {
+            error('服务出错!')
+            Helper.log('deleteVoteItem -> ', err)
+          })
+        }
       },
       // create vote item
       createVote () {

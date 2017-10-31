@@ -79,7 +79,7 @@ const user = {
           const serviceData = result.data
           if (response.status === 200 && result.code === 0) {
             commit('SET_ROLES', [serviceData])
-            commit('SET_NAME', serviceData.name)
+            commit('SET_NAME', serviceData.userName)
             commit('SET_AVATAR', serviceData.portrait)
             commit('SET_INTRODUCTION', serviceData.introduction)
           } else {

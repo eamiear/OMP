@@ -4,15 +4,18 @@
     .logo{
       font-size: 18px;
       color: #EAEBEB;
-      background-color: #1E2C34;
-      border-bottom: 2px solid #1C272D;
+      //background-color: #1E2C34;
+      //border-bottom: 2px solid #1C272D;
+      background-color: #222c32;
+      box-shadow: 0 2px 20px 0 #0b161c;
     }
     .logo:hover{
       background-color: #1E2C34;
     }
     .navbar{
       background-color: #fff;
-      @include box-shadow(0 -3px 8px 0 rgba(0, 0, 0, 0.44))
+      //@include box-shadow(0 -3px 8px 0 rgba(0, 0, 0, 0.44))
+      @include box-shadow(0 2px 20px 0 rgba(11, 22, 28, 0.1));
     }
     .navbar .sidebar-toggle{
       color: #1F2C34;

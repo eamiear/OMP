@@ -138,6 +138,7 @@ export function deleteVote (id, status = -1) {
 
 /**
  * 启用|禁用投票
+ * @param id
  * @param magazineId
  * @param status
  */

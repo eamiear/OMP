@@ -33,7 +33,7 @@
             <el-col :span="8">
               <el-form-item label="商场" class="postInfo-container-item" prop="mallId">
                 <el-select clearable class="filter-item" placeholder="选择商场" v-model="spicyForm.mallId" @visible-change="fetchMallList">
-                  <el-option v-for="item in malls" :key="item.id" :label="item.name" :value="item.id"></el-option>
+                  <el-option v-for="item in malls" :key="item.id" :label="item.shortname" :value="item.id"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -58,7 +58,12 @@
         </el-col>
         <el-col :span="14" style="text-align: left; margin-left: 80px; margin-bottom: 20px;">
           <el-button type="primary" @click.native.prevent="handleSubmit">发布</el-button>
-          <el-button type="default" style="margin-right: 10px;" @click.native.prevent="handleSubmit">取消</el-button>
+          <router-link :to="{path: '/merchant/spicyleader/list'}">
+            <el-button type="default" style="margin-right: 10px;">
+              取消
+            </el-button>
+          </router-link>
+
         </el-col>
       </el-row>
     </el-form>
@@ -69,8 +74,10 @@
   import Tinymce from '@/components/Tinymce'
   import Upload from '@/components/Upload/singleImage3'
   import { EXCEPTION_STATUS_DESC_MAP } from '@/common/constants'
+  import { Utopa } from '@/common/utopa'
   import * as SpicyLeader from '@/api/merchants/spicyleader'
   import * as themeService from '@/api/merchants/theme'
+  import {fetchMallsList} from '@/api/malls/mall'
 
   export default {
     name: 'articleDetail',
@@ -92,7 +99,8 @@
           periods: '',  // 期数
           content: '', // 文章内容
           abstracts: '',
-          coverImage: '', // 文章图片
+          coverImage: '', // 文章图片访问路径
+          imageKey: '', // 文章图片 七牛key
           id: undefined
         },
         themes: [],
@@ -104,37 +112,50 @@
           title: [{ require: true, validator: validateRequire, message: '请输入标题' }],
 //          tagId: [{ require: true, validator: validateRequire, message: '请选择主题' }],
           periods: [{ require: true, validator: validateRequire, message: '请填写期数' }],
+          mallId: [{ require: true, validator: validateRequire, message: '请选择商场', trigger: 'change' }],
           coverImage: [{ require: true, validator: validateRequire, message: '请上传封面', tigger: 'change' }]
         }
       }
     },
     computed: {
       abstractCount () { // 摘要字数
-        return this.spicyForm.abstracts.length
+        return this.spicyForm.abstracts ? this.spicyForm.abstracts.length : 0
       },
       isEdit () { // 编辑状态
-        return this.$route.meta.isEdit // 根据meta判断
+        console.log('route ', this.$route)
+        return this.$route.query.isEdit // 根据meta判断
         // return this.$route.path.indexOf('edit') !== -1 // 根据路由判断
+      },
+      magazineId () {
+        return this.$route.query.id
       }
     },
     created () {
       if (this.isEdit) {
+        this.fetchThemeList()
+        this.fetchMallList()
         this.fetchData()
       }
     },
     watch: {
       'spicyForm.abstracts': function (val) {
+        if (!this.spicyForm.abstracts) return
         if (this.abstractCount >= this.abstractTotal) {
           this.$nextTick(() => { this.spicyForm.abstracts = val.slice(0, this.abstractTotal) })
         }
+      },
+      'spicyForm.coverImage': function (val) {
+        console.log('coverImage ', val)
+        this.spicyForm.imageKey = val.slice(val.lastIndexOf('/') + 1)
       }
     },
     methods: {
       fetchData () {
-        SpicyLeader.fetchSpicyLeaderById().then(response => {
-          this.spicyForm = response.data
+        SpicyLeader.fetchSpicyLeaderById(this.magazineId).then(response => {
+          if (Utopa.isValidRequest(response)) {
+            this.spicyForm = response.data.data
+          }
         }).catch(err => {
-          this.fetchSuccess = false
           console.log(err)
         })
       },
@@ -142,7 +163,7 @@
         if (!this.themes.length) {
           themeService.fetchThemeList().then((response) => {
             const result = response.data
-            if (response.status === 200 && result.code === 0) {
+            if (Utopa.isValidRequest(response)) {
               this.themes = result.data.infos || []
             }
           })
@@ -150,7 +171,12 @@
       },
       fetchMallList () {
         if (!this.malls.length) {
-          // TODO
+          fetchMallsList().then(response => {
+            const result = response.data
+            if (Utopa.isValidRequest(response)) {
+              this.malls = result.data.allMallBrief || []
+            }
+          })
         }
       },
       handleSubmit () {
@@ -159,8 +185,8 @@
           if (valid) {
             SpicyLeader.createSpicyLeader(_this.spicyForm).then((response) => {
               const result = response.data
-              if (response.status === 200 && result.code === 0) {
-                _this.$router.push({path: '/merchants/spicyleader'})
+              if (Utopa.isValidRequest(response)) {
+                _this.$router.push({path: '/merchant/spicyleader'})
               } else {
                 _this.$message({
                   type: 'error',

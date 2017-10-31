@@ -252,6 +252,11 @@
         const endTime = this.listQuery.registerTime[1]
         this.listQuery.beginTime = beginTime && Helper.parseTime(beginTime)
         this.listQuery.endTime = endTime && Helper.parseTime(endTime)
+      },
+      dialogFormVisible (val) {
+        if (val === false) {
+          this.$refs.userModelForm.resetFields()
+        }
       }
     },
     mounted () {

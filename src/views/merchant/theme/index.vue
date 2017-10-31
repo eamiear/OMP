@@ -158,6 +158,13 @@
     created () {
       this.getList()
     },
+    watch: {
+      dialogFormVisible (val) {
+        if (val === false) {
+          this.$refs.themeForm.resetFields()
+        }
+      }
+    },
     mounted () {
       this.fixLayout()
       window.onresize = () => {

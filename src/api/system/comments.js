@@ -7,3 +7,15 @@
 // -----------  ---------------
 // ===================================
 
+import request from '@/common/ajax'
+
+/**
+ * 获取精选评论
+ * @param magazineId
+ */
+export function fetchCriticalComments (magazineId) {
+  return request.post({
+    reqMethod: 'operation.popularize.magazine.operate.getMagazineChosenComment',
+    params: { magazineId }
+  })
+}

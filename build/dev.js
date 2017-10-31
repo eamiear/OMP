@@ -1,9 +1,6 @@
 var express = require('express'),
   webpack = require('webpack'),
-  // PATHS = require('./config/PATHS'),
-  // PORTS = require('./config/PORTS'),
   config = require('./webpack.dev.conf'),
-  // ENV = require('./config/ENV'),
   configure = require('./config'),
   proxy = require('http-proxy-middleware'),
   app = express()
@@ -17,20 +14,17 @@ var compiler = webpack(config)
 app.use('/static', express.static(configure.paths.STATIC))
 
 // Mock server
-app.use('/api', proxy({
-  target: 'http://127.0.0.1:' + configure.dev.MOCK_SERVER,
-  changeOrigin: true,
-  pathRewrite: {
-    // 重写 URL：[Dev Server]/api/xxx <=> [Mock Server]/xxx
-    '^/api': '/'
-  }
-}))
-app.use('/ting-common-entry', proxy({
-  target: 'http://118.31.188.148/',
-  changeOrigin: true,
-  pathRewrite: {
-    '^/ting-common-entry': '/'
-  }
+// app.use('/api', proxy({
+//   target: 'http://127.0.0.1:' + configure.dev.MOCK_SERVER,
+//   changeOrigin: true,
+//   pathRewrite: {
+//     // 重写 URL：[Dev Server]/api/xxx <=> [Mock Server]/xxx
+//     '^/api': '/'
+//   }
+// }))
+app.use('/ting-common-entry/app.do', proxy({
+  target: 'http://192.168.239.51:8080/',
+  changeOrigin: true
 }))
 
 // handle fallback for HTML5 history API

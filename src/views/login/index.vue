@@ -1,5 +1,5 @@
 <template>
-  <div class="login-container">
+  <div class="login-container" :style="backdrop">
     <section class="form-container">
       <h3 class="title">优托邦运营管理平台</h3>
       <el-form class="card-box login-form" autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left">
@@ -18,7 +18,7 @@
           <span class='verify-code'><v-image :source="verifyCodeImage" /></span>
         </el-form-item>
 
-        <el-button type="primary" style="width:100%;margin-bottom:30px;" :loading="loading" @click.native.prevent="handleLogin">登录</el-button>
+        <el-button type="primary" style="width: 320px;margin-bottom:30px;" :loading="loading" @click.native.prevent="handleLogin">登录</el-button>
       </el-form>
     </section>
   </div>
@@ -55,9 +55,15 @@ export default {
       callback()
     }
     return {
+      backdrop: {
+        backgroundImage: 'url(' + require('@/assets/image/login/background.jpg') + ')',
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+        marginTop: '0'
+      },
       loginForm: {
-        username: '18922727219',
-        password: 'abc123',
+        username: '',
+        password: '',
         verification: ''
       },
       loginRules: {
@@ -111,12 +117,14 @@ export default {
   $bg:#2d3a4b;
   $dark_gray:#889aa4;
   $light_gray:#eee;
+  $white: #fff;
 
   .login-container {
     position: relative;
     width: 100%;
     height: 100vh;
     background-color: $bg;
+    overflow: hidden;
 
     input:-webkit-autofill {
       -webkit-box-shadow: 0 0 0 1000px #fff inset !important;
@@ -129,56 +137,61 @@ export default {
       border-radius: 0;
       padding: 12px 5px 12px 15px;
       color: $light-gray;
-      height: 30px;
+      height: 40px;
     }
 
     .form-container{
       position: absolute;
       left: 0;
       right: 0;
-      margin: 200px auto;
-      width: 280px;
+      margin: 14% auto;
+      width: 400px;
 
       .title {
-        font-size: 26px;
-        color: $light-gray;
-        margin: 0 auto 40px auto;
+        font-size: 44px;
+        color: $white;
+        margin: 0 auto 60px auto;
         text-align: center;
         font-weight: bold;
+        text-shadow: 0 1px 18px rgba(0,51,153,0.4);
       }
     }
 
     .login-form {
       background-color: #fff;
-      padding: 35px 35px 15px 35px;
+      padding: 60px 48px 46px;
       border-radius: 3px;
-      @include box-shadow(0 -3px 8px 0 rgba(0, 0, 0, 0.44));
+      @include box-shadow(0 16px 59px 0 rgba(14,102,164,0.46));
 
       .el-form-item {
+        width: 320px;
+        margin-bottom: 30px;
         background-color: transparent;
       }
       .el-form-item__content{
-        line-height: 30px;
+        line-height: 40px;
         background-color: transparent;
       }
 
       .el-input {
         display: inline-block;
-        height: 30px;
+        height: 40px;
       }
       .el-input .el-input__inner{
         border: 1px solid #EBEBEB;
-        border-radius: 2px;
-        color: #CFCFCF;
+        border-radius: 4px;
+        color: #999;
+        font-weight: bold;
+        box-shadow: inset 0 0 3px 0 rgba(0,0,0,0.2);
       }
       .el-input .el-input__inner:focus{
         border-color: #20a0ff;
       }
       .verify .el-input{
-        width: 75%;
+        width: 82%;
       }
       .verify .verify-code{
-        width: 25%;
+        width: 18%;
         height: 100%;
         position: absolute;
         right: 0;
@@ -190,7 +203,14 @@ export default {
         width: 100%;
         height: 100%;
       }
-
+      .el-button{
+        padding: 12px 15px;
+      }
+      .el-button span{
+        font-family: 'microsoft yahei';
+        font-size: 14px;
+        font-weight: bold;
+      }
       .el-button--primary{
         background-color: #006AE2;
         border-color: #006AE2;
